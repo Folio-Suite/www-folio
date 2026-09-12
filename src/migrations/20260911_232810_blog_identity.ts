@@ -6,77 +6,77 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
    CREATE TYPE "public"."enum_blog_status" AS ENUM('draft', 'published');
   CREATE TYPE "public"."enum__blog_v_version_status" AS ENUM('draft', 'published');
   CREATE TABLE "blog_populated_authors" (
-  	"_order" integer NOT NULL,
-  	"_parent_id" integer NOT NULL,
-  	"id" varchar PRIMARY KEY NOT NULL,
-  	"name" varchar
+    "_order" integer NOT NULL,
+    "_parent_id" integer NOT NULL,
+    "id" varchar PRIMARY KEY NOT NULL,
+    "name" varchar
   );
-  
+
   CREATE TABLE "blog" (
-  	"id" serial PRIMARY KEY NOT NULL,
-  	"title" varchar,
-  	"hero_image_id" integer,
-  	"content" jsonb,
-  	"meta_title" varchar,
-  	"meta_image_id" integer,
-  	"meta_description" varchar,
-  	"published_at" timestamp(3) with time zone,
-  	"generate_slug" boolean DEFAULT true,
-  	"slug" varchar,
-  	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
-  	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
-  	"_status" "enum_blog_status" DEFAULT 'draft'
+    "id" serial PRIMARY KEY NOT NULL,
+    "title" varchar,
+    "hero_image_id" integer,
+    "content" jsonb,
+    "meta_title" varchar,
+    "meta_image_id" integer,
+    "meta_description" varchar,
+    "published_at" timestamp(3) with time zone,
+    "generate_slug" boolean DEFAULT true,
+    "slug" varchar,
+    "updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+    "created_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+    "_status" "enum_blog_status" DEFAULT 'draft'
   );
-  
+
   CREATE TABLE "blog_rels" (
-  	"id" serial PRIMARY KEY NOT NULL,
-  	"order" integer,
-  	"parent_id" integer NOT NULL,
-  	"path" varchar NOT NULL,
-  	"blog_id" integer,
-  	"categories_id" integer,
-  	"users_id" integer
+    "id" serial PRIMARY KEY NOT NULL,
+    "order" integer,
+    "parent_id" integer NOT NULL,
+    "path" varchar NOT NULL,
+    "blog_id" integer,
+    "categories_id" integer,
+    "users_id" integer
   );
-  
+
   CREATE TABLE "_blog_v_version_populated_authors" (
-  	"_order" integer NOT NULL,
-  	"_parent_id" integer NOT NULL,
-  	"id" serial PRIMARY KEY NOT NULL,
-  	"_uuid" varchar,
-  	"name" varchar
+    "_order" integer NOT NULL,
+    "_parent_id" integer NOT NULL,
+    "id" serial PRIMARY KEY NOT NULL,
+    "_uuid" varchar,
+    "name" varchar
   );
-  
+
   CREATE TABLE "_blog_v" (
-  	"id" serial PRIMARY KEY NOT NULL,
-  	"parent_id" integer,
-  	"version_title" varchar,
-  	"version_hero_image_id" integer,
-  	"version_content" jsonb,
-  	"version_meta_title" varchar,
-  	"version_meta_image_id" integer,
-  	"version_meta_description" varchar,
-  	"version_published_at" timestamp(3) with time zone,
-  	"version_generate_slug" boolean DEFAULT true,
-  	"version_slug" varchar,
-  	"version_updated_at" timestamp(3) with time zone,
-  	"version_created_at" timestamp(3) with time zone,
-  	"version__status" "enum__blog_v_version_status" DEFAULT 'draft',
-  	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
-  	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
-  	"latest" boolean,
-  	"autosave" boolean
+    "id" serial PRIMARY KEY NOT NULL,
+    "parent_id" integer,
+    "version_title" varchar,
+    "version_hero_image_id" integer,
+    "version_content" jsonb,
+    "version_meta_title" varchar,
+    "version_meta_image_id" integer,
+    "version_meta_description" varchar,
+    "version_published_at" timestamp(3) with time zone,
+    "version_generate_slug" boolean DEFAULT true,
+    "version_slug" varchar,
+    "version_updated_at" timestamp(3) with time zone,
+    "version_created_at" timestamp(3) with time zone,
+    "version__status" "enum__blog_v_version_status" DEFAULT 'draft',
+    "created_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+    "updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+    "latest" boolean,
+    "autosave" boolean
   );
-  
+
   CREATE TABLE "_blog_v_rels" (
-  	"id" serial PRIMARY KEY NOT NULL,
-  	"order" integer,
-  	"parent_id" integer NOT NULL,
-  	"path" varchar NOT NULL,
-  	"blog_id" integer,
-  	"categories_id" integer,
-  	"users_id" integer
+    "id" serial PRIMARY KEY NOT NULL,
+    "order" integer,
+    "parent_id" integer NOT NULL,
+    "path" varchar NOT NULL,
+    "blog_id" integer,
+    "categories_id" integer,
+    "users_id" integer
   );
-  
+
   ALTER TABLE "posts_populated_authors" DISABLE ROW LEVEL SECURITY;
   ALTER TABLE "posts" DISABLE ROW LEVEL SECURITY;
   ALTER TABLE "posts_rels" DISABLE ROW LEVEL SECURITY;
@@ -90,19 +90,19 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
   DROP TABLE "_posts_v" CASCADE;
   DROP TABLE "_posts_v_rels" CASCADE;
   ALTER TABLE "pages_rels" DROP CONSTRAINT IF EXISTS "pages_rels_posts_fk";
-  
+
   ALTER TABLE "_pages_v_rels" DROP CONSTRAINT IF EXISTS "_pages_v_rels_posts_fk";
-  
+
   ALTER TABLE "redirects_rels" DROP CONSTRAINT IF EXISTS "redirects_rels_posts_fk";
-  
+
   ALTER TABLE "search_rels" DROP CONSTRAINT IF EXISTS "search_rels_posts_fk";
-  
+
   ALTER TABLE "payload_locked_documents_rels" DROP CONSTRAINT IF EXISTS "payload_locked_documents_rels_posts_fk";
-  
+
   ALTER TABLE "header_rels" DROP CONSTRAINT IF EXISTS "header_rels_posts_fk";
-  
+
   ALTER TABLE "footer_rels" DROP CONSTRAINT IF EXISTS "footer_rels_posts_fk";
-  
+
   ALTER TABLE "pages_blocks_archive" ALTER COLUMN "relation_to" SET DATA TYPE text;
   ALTER TABLE "pages_blocks_archive" ALTER COLUMN "relation_to" SET DEFAULT 'blog'::text;
   DROP TYPE "public"."enum_pages_blocks_archive_relation_to";
@@ -207,77 +207,77 @@ export async function down({ db }: MigrateDownArgs): Promise<void> {
    CREATE TYPE "public"."enum_posts_status" AS ENUM('draft', 'published');
   CREATE TYPE "public"."enum__posts_v_version_status" AS ENUM('draft', 'published');
   CREATE TABLE "posts_populated_authors" (
-  	"_order" integer NOT NULL,
-  	"_parent_id" integer NOT NULL,
-  	"id" varchar PRIMARY KEY NOT NULL,
-  	"name" varchar
+    "_order" integer NOT NULL,
+    "_parent_id" integer NOT NULL,
+    "id" varchar PRIMARY KEY NOT NULL,
+    "name" varchar
   );
-  
+
   CREATE TABLE "posts" (
-  	"id" serial PRIMARY KEY NOT NULL,
-  	"title" varchar,
-  	"hero_image_id" integer,
-  	"content" jsonb,
-  	"meta_title" varchar,
-  	"meta_image_id" integer,
-  	"meta_description" varchar,
-  	"published_at" timestamp(3) with time zone,
-  	"generate_slug" boolean DEFAULT true,
-  	"slug" varchar,
-  	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
-  	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
-  	"_status" "enum_posts_status" DEFAULT 'draft'
+    "id" serial PRIMARY KEY NOT NULL,
+    "title" varchar,
+    "hero_image_id" integer,
+    "content" jsonb,
+    "meta_title" varchar,
+    "meta_image_id" integer,
+    "meta_description" varchar,
+    "published_at" timestamp(3) with time zone,
+    "generate_slug" boolean DEFAULT true,
+    "slug" varchar,
+    "updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+    "created_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+    "_status" "enum_posts_status" DEFAULT 'draft'
   );
-  
+
   CREATE TABLE "posts_rels" (
-  	"id" serial PRIMARY KEY NOT NULL,
-  	"order" integer,
-  	"parent_id" integer NOT NULL,
-  	"path" varchar NOT NULL,
-  	"posts_id" integer,
-  	"categories_id" integer,
-  	"users_id" integer
+    "id" serial PRIMARY KEY NOT NULL,
+    "order" integer,
+    "parent_id" integer NOT NULL,
+    "path" varchar NOT NULL,
+    "posts_id" integer,
+    "categories_id" integer,
+    "users_id" integer
   );
-  
+
   CREATE TABLE "_posts_v_version_populated_authors" (
-  	"_order" integer NOT NULL,
-  	"_parent_id" integer NOT NULL,
-  	"id" serial PRIMARY KEY NOT NULL,
-  	"_uuid" varchar,
-  	"name" varchar
+    "_order" integer NOT NULL,
+    "_parent_id" integer NOT NULL,
+    "id" serial PRIMARY KEY NOT NULL,
+    "_uuid" varchar,
+    "name" varchar
   );
-  
+
   CREATE TABLE "_posts_v" (
-  	"id" serial PRIMARY KEY NOT NULL,
-  	"parent_id" integer,
-  	"version_title" varchar,
-  	"version_hero_image_id" integer,
-  	"version_content" jsonb,
-  	"version_meta_title" varchar,
-  	"version_meta_image_id" integer,
-  	"version_meta_description" varchar,
-  	"version_published_at" timestamp(3) with time zone,
-  	"version_generate_slug" boolean DEFAULT true,
-  	"version_slug" varchar,
-  	"version_updated_at" timestamp(3) with time zone,
-  	"version_created_at" timestamp(3) with time zone,
-  	"version__status" "enum__posts_v_version_status" DEFAULT 'draft',
-  	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
-  	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
-  	"latest" boolean,
-  	"autosave" boolean
+    "id" serial PRIMARY KEY NOT NULL,
+    "parent_id" integer,
+    "version_title" varchar,
+    "version_hero_image_id" integer,
+    "version_content" jsonb,
+    "version_meta_title" varchar,
+    "version_meta_image_id" integer,
+    "version_meta_description" varchar,
+    "version_published_at" timestamp(3) with time zone,
+    "version_generate_slug" boolean DEFAULT true,
+    "version_slug" varchar,
+    "version_updated_at" timestamp(3) with time zone,
+    "version_created_at" timestamp(3) with time zone,
+    "version__status" "enum__posts_v_version_status" DEFAULT 'draft',
+    "created_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+    "updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+    "latest" boolean,
+    "autosave" boolean
   );
-  
+
   CREATE TABLE "_posts_v_rels" (
-  	"id" serial PRIMARY KEY NOT NULL,
-  	"order" integer,
-  	"parent_id" integer NOT NULL,
-  	"path" varchar NOT NULL,
-  	"posts_id" integer,
-  	"categories_id" integer,
-  	"users_id" integer
+    "id" serial PRIMARY KEY NOT NULL,
+    "order" integer,
+    "parent_id" integer NOT NULL,
+    "path" varchar NOT NULL,
+    "posts_id" integer,
+    "categories_id" integer,
+    "users_id" integer
   );
-  
+
   ALTER TABLE "blog_populated_authors" DISABLE ROW LEVEL SECURITY;
   ALTER TABLE "blog" DISABLE ROW LEVEL SECURITY;
   ALTER TABLE "blog_rels" DISABLE ROW LEVEL SECURITY;
@@ -291,19 +291,19 @@ export async function down({ db }: MigrateDownArgs): Promise<void> {
   DROP TABLE "_blog_v" CASCADE;
   DROP TABLE "_blog_v_rels" CASCADE;
   ALTER TABLE "pages_rels" DROP CONSTRAINT IF EXISTS "pages_rels_blog_fk";
-  
+
   ALTER TABLE "_pages_v_rels" DROP CONSTRAINT IF EXISTS "_pages_v_rels_blog_fk";
-  
+
   ALTER TABLE "redirects_rels" DROP CONSTRAINT IF EXISTS "redirects_rels_blog_fk";
-  
+
   ALTER TABLE "search_rels" DROP CONSTRAINT IF EXISTS "search_rels_blog_fk";
-  
+
   ALTER TABLE "payload_locked_documents_rels" DROP CONSTRAINT IF EXISTS "payload_locked_documents_rels_blog_fk";
-  
+
   ALTER TABLE "header_rels" DROP CONSTRAINT IF EXISTS "header_rels_blog_fk";
-  
+
   ALTER TABLE "footer_rels" DROP CONSTRAINT IF EXISTS "footer_rels_blog_fk";
-  
+
   ALTER TABLE "pages_blocks_archive" ALTER COLUMN "relation_to" SET DATA TYPE text;
   ALTER TABLE "pages_blocks_archive" ALTER COLUMN "relation_to" SET DEFAULT 'posts'::text;
   DROP TYPE "public"."enum_pages_blocks_archive_relation_to";

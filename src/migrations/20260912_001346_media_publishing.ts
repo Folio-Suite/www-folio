@@ -3,14 +3,14 @@ import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-vercel-postg
 export async function up({ db }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
    CREATE TABLE "media_caption_tracks" (
-  	"_order" integer NOT NULL,
-  	"_parent_id" integer NOT NULL,
-  	"id" varchar PRIMARY KEY NOT NULL,
-  	"label" varchar,
-  	"language" varchar,
-  	"url" varchar
+    "_order" integer NOT NULL,
+    "_parent_id" integer NOT NULL,
+    "id" varchar PRIMARY KEY NOT NULL,
+    "label" varchar,
+    "language" varchar,
+    "url" varchar
   );
-  
+
   ALTER TABLE "pages_blocks_media_block" ADD COLUMN "decorative" boolean DEFAULT false;
   ALTER TABLE "pages_blocks_media_block" ADD COLUMN "autoplay" boolean DEFAULT false;
   ALTER TABLE "pages_blocks_media_block" ADD COLUMN "loop" boolean DEFAULT false;
@@ -34,7 +34,7 @@ export async function down({ db }: MigrateDownArgs): Promise<void> {
    ALTER TABLE "media_caption_tracks" DISABLE ROW LEVEL SECURITY;
   DROP TABLE "media_caption_tracks" CASCADE;
   ALTER TABLE "media" DROP CONSTRAINT "media_poster_id_media_id_fk";
-  
+
   DROP INDEX "media_poster_idx";
   ALTER TABLE "pages_blocks_media_block" DROP COLUMN "decorative";
   ALTER TABLE "pages_blocks_media_block" DROP COLUMN "autoplay";

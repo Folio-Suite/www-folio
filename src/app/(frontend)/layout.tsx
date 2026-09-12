@@ -29,7 +29,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="alternate" type="application/rss+xml" title="RSS" href="/feed.xml" />
         <link rel="alternate" type="application/atom+xml" title="Atom" href="/feed.atom" />
         <link rel="alternate" type="application/feed+json" title="JSON Feed" href="/feed.json" />
-        <link href="/favicon.ico" rel="icon" sizes="32x32" />
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
         {/* Vercel Analytics and Speed Insights scripts */}
         <SpeedInsights />

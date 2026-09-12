@@ -10,52 +10,52 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
   ALTER TYPE "public"."enum_payload_jobs_task_slug" ADD VALUE 'verifyWebmention' BEFORE 'schedulePublish';
   ALTER TYPE "public"."enum_payload_jobs_task_slug" ADD VALUE 'sendWebmention' BEFORE 'schedulePublish';
   CREATE TABLE "webmentions" (
-  	"id" serial PRIMARY KEY NOT NULL,
-  	"key" varchar NOT NULL,
-  	"source" varchar NOT NULL,
-  	"target_id" integer NOT NULL,
-  	"source_title" varchar,
-  	"fingerprint" varchar,
-  	"verification" "enum_webmentions_verification" DEFAULT 'pending' NOT NULL,
-  	"moderation" "enum_webmentions_moderation" DEFAULT 'pending' NOT NULL,
-  	"error" varchar,
-  	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
-  	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
+    "id" serial PRIMARY KEY NOT NULL,
+    "key" varchar NOT NULL,
+    "source" varchar NOT NULL,
+    "target_id" integer NOT NULL,
+    "source_title" varchar,
+    "fingerprint" varchar,
+    "verification" "enum_webmentions_verification" DEFAULT 'pending' NOT NULL,
+    "moderation" "enum_webmentions_moderation" DEFAULT 'pending' NOT NULL,
+    "error" varchar,
+    "updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+    "created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
   );
-  
+
   CREATE TABLE "webmention_limits" (
-  	"id" serial PRIMARY KEY NOT NULL,
-  	"bucket" varchar NOT NULL,
-  	"count" numeric NOT NULL,
-  	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
-  	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
+    "id" serial PRIMARY KEY NOT NULL,
+    "bucket" varchar NOT NULL,
+    "count" numeric NOT NULL,
+    "updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+    "created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
   );
-  
+
   CREATE TABLE "webmention_deliveries" (
-  	"id" serial PRIMARY KEY NOT NULL,
-  	"key" varchar NOT NULL,
-  	"entry_id" integer NOT NULL,
-  	"source" varchar NOT NULL,
-  	"target" varchar NOT NULL,
-  	"endpoint" varchar,
-  	"state" "enum_webmention_deliveries_state" DEFAULT 'pending' NOT NULL,
-  	"attempts" numeric DEFAULT 0,
-  	"error" varchar,
-  	"retry" boolean,
-  	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
-  	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
+    "id" serial PRIMARY KEY NOT NULL,
+    "key" varchar NOT NULL,
+    "entry_id" integer NOT NULL,
+    "source" varchar NOT NULL,
+    "target" varchar NOT NULL,
+    "endpoint" varchar,
+    "state" "enum_webmention_deliveries_state" DEFAULT 'pending' NOT NULL,
+    "attempts" numeric DEFAULT 0,
+    "error" varchar,
+    "retry" boolean,
+    "updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+    "created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
   );
-  
+
   CREATE TABLE "webmention_publications" (
-  	"id" serial PRIMARY KEY NOT NULL,
-  	"entry_id" integer NOT NULL,
-  	"fingerprint" varchar NOT NULL,
-  	"revision" numeric NOT NULL,
-  	"targets" jsonb,
-  	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
-  	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
+    "id" serial PRIMARY KEY NOT NULL,
+    "entry_id" integer NOT NULL,
+    "fingerprint" varchar NOT NULL,
+    "revision" numeric NOT NULL,
+    "targets" jsonb,
+    "updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
+    "created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
   );
-  
+
   ALTER TABLE "payload_jobs" ADD COLUMN "concurrency_key" varchar;
   ALTER TABLE "payload_locked_documents_rels" ADD COLUMN "webmentions_id" integer;
   ALTER TABLE "payload_locked_documents_rels" ADD COLUMN "webmention_limits_id" integer;
@@ -100,13 +100,13 @@ export async function down({ db }: MigrateDownArgs): Promise<void> {
   DROP TABLE "webmention_deliveries" CASCADE;
   DROP TABLE "webmention_publications" CASCADE;
   ALTER TABLE "payload_locked_documents_rels" DROP CONSTRAINT "payload_locked_documents_rels_webmentions_fk";
-  
+
   ALTER TABLE "payload_locked_documents_rels" DROP CONSTRAINT "payload_locked_documents_rels_webmention_limits_fk";
-  
+
   ALTER TABLE "payload_locked_documents_rels" DROP CONSTRAINT "payload_locked_documents_rels_webmention_deliveries_fk";
-  
+
   ALTER TABLE "payload_locked_documents_rels" DROP CONSTRAINT "payload_locked_documents_rels_webmention_publications_fk";
-  
+
   ALTER TABLE "payload_jobs_log" ALTER COLUMN "task_slug" SET DATA TYPE text;
   DROP TYPE "public"."enum_payload_jobs_log_task_slug";
   CREATE TYPE "public"."enum_payload_jobs_log_task_slug" AS ENUM('inline', 'schedulePublish');
