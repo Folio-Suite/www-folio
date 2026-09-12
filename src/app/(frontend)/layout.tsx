@@ -14,13 +14,16 @@ import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { draftMode } from 'next/headers'
 
 import './globals.css'
-import { getServerSideURL } from '@/utilities/getURL'
+import { SiteProvider } from '@/sites/Context'
+import { sites } from '@/sites/config'
+import { getRequestSite } from '@/sites/request'
 
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { isEnabled } = await draftMode()
+  const destination = await getRequestSite()
 
   return (
     <html className={cn(GeistSans.variable, GeistMono.variable)} lang="en" suppressHydrationWarning>
@@ -35,26 +38,37 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Analytics />
       </head>
       <body>
-        <Providers>
-          <AdminBar
-            adminBarProps={{
-              preview: isEnabled,
-            }}
-          />
+        <SiteProvider {...destination}>
+          <Providers>
+            <AdminBar
+              adminBarProps={{
+                preview: isEnabled,
+              }}
+            />
 
-          <Header />
-          {children}
-          <Footer />
-        </Providers>
+            <Header />
+            {children}
+            <Footer />
+          </Providers>
+        </SiteProvider>
       </body>
     </html>
   )
 }
 
-export const metadata: Metadata = {
-  metadataBase: new URL(getServerSideURL()),
-  openGraph: mergeOpenGraph(),
-  twitter: {
-    card: 'summary_large_image',
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const { site, previewHost } = await getRequestSite()
+  return {
+    metadataBase: new URL(sites[site].origin),
+    title: sites[site].name,
+    description: sites[site].description,
+    openGraph: mergeOpenGraph({
+      siteName: sites[site].name,
+      title: sites[site].name,
+      description: sites[site].description,
+      url: sites[site].origin,
+    }),
+    robots: previewHost ? { index: false, follow: false } : undefined,
+    twitter: { card: 'summary_large_image' },
+  }
 }

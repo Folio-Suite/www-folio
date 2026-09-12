@@ -58,6 +58,7 @@ test('page and article metadata use editorial titles, media facts, and actual au
     collection: 'pages',
     context,
     data: {
+      site: 'product',
       title: 'About',
       slug: 'metadata-about',
       hero: { type: 'none' },
@@ -114,7 +115,7 @@ test('page and article metadata use editorial titles, media facts, and actual au
     await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', schema.image)
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
       'href',
-      'http://localhost:3000/metadata-about',
+      'https://foliosuite.app/metadata-about',
     )
   } finally {
     await payload.delete({ collection: 'pages', id: document.id, context })

@@ -4,7 +4,8 @@ import { RelatedEntries } from '@/blocks/RelatedEntries/Component'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
-import { draftMode } from 'next/headers'
+import { pagePreview } from '@/sites/preview'
+import { getRequestSite } from '@/sites/request'
 import { notFound } from 'next/navigation'
 import React, { cache } from 'react'
 import RichText from '@/components/RichText'
@@ -54,9 +55,11 @@ function decodeSlug(value: string) {
 }
 
 export default async function BlogEntry({ params: paramsPromise }: Args) {
-  const { isEnabled: draft } = await draftMode()
   const { slug = '' } = await paramsPromise
   const decodedSlug = decodeSlug(slug)
+  const { site } = await getRequestSite()
+  const preview = await pagePreview(site, 'blog', decodedSlug)
+  const draft = Boolean(preview)
   const url = '/blog/' + encodeURIComponent(decodedSlug)
   const post = await queryBlogEntryBySlug({ slug: decodedSlug })
 
@@ -76,7 +79,7 @@ export default async function BlogEntry({ params: paramsPromise }: Args) {
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 
-      {draft && <LivePreviewListener />}
+      {preview && <LivePreviewListener serverURL={preview.editorOrigin} />}
 
       <BlogHero post={post} />
 
@@ -106,7 +109,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const post = await queryBlogEntryBySlug({ slug: decodedSlug })
 
   const metadata = await generateMeta({ doc: post, collection: 'blog' })
-  if ((await draftMode()).isEnabled) {
+  if (await pagePreview((await getRequestSite()).site, 'blog', decodedSlug)) {
     const payload = await getPayload({ config: configPromise })
     const published = post
       ? await payload.findByID({
@@ -124,7 +127,8 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 }
 
 const queryBlogEntryBySlug = cache(async ({ slug }: { slug: string }) => {
-  const { isEnabled: draft } = await draftMode()
+  const preview = await pagePreview((await getRequestSite()).site, 'blog', slug)
+  const draft = Boolean(preview)
 
   const payload = await getPayload({ config: configPromise })
 
@@ -135,6 +139,7 @@ const queryBlogEntryBySlug = cache(async ({ slug }: { slug: string }) => {
     overrideAccess: draft,
     pagination: false,
     where: {
+      ...(preview ? { id: { equals: preview.documentID } } : {}),
       slug: {
         equals: slug,
       },

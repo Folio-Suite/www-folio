@@ -1,9 +1,11 @@
+'use client'
 import { Button, type ButtonProps } from '@/components/ui/button'
 import { cn } from '@/utilities/ui'
 import Link from 'next/link'
 import React from 'react'
 
-import type { Page, BlogEntry } from '@/payload-types'
+import { useSite, pageLink } from '@/sites/Context'
+import type { Site } from '@/sites/config'
 
 type CMSLinkType = {
   appearance?: 'inline' | ButtonProps['variant']
@@ -13,7 +15,7 @@ type CMSLinkType = {
   newTab?: boolean | null
   reference?: {
     relationTo: 'pages' | 'blog'
-    value: Page | BlogEntry | string | number
+    value: { slug?: string | null; site?: Site | null } | string | number
   } | null
   size?: ButtonProps['size'] | null
   type?: 'custom' | 'reference' | null
@@ -33,11 +35,16 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
     url,
   } = props
 
+  const current = useSite()
   const href =
     type === 'reference' && typeof reference?.value === 'object' && reference.value.slug
-      ? `${reference?.relationTo !== 'pages' ? `/${reference?.relationTo}` : ''}/${
-          reference.value.slug
-        }`
+      ? reference.relationTo === 'pages'
+        ? pageLink(
+            'site' in reference.value ? reference.value.site || 'product' : 'product',
+            reference.value.slug,
+            current,
+          )
+        : `/blog/${encodeURIComponent(reference.value.slug)}`
       : url
 
   if (!href) return null

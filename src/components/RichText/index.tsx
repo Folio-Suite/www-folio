@@ -1,13 +1,13 @@
+import { isSite } from '@/sites/config'
+import { CMSLink } from '@/components/Link'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import {
   DefaultNodeTypes,
   SerializedBlockNode,
-  SerializedLinkNode,
   type DefaultTypedEditorState,
 } from '@payloadcms/richtext-lexical'
 import {
   JSXConvertersFunction,
-  LinkJSXConverter,
   RichText as ConvertRichText,
 } from '@payloadcms/richtext-lexical/react'
 
@@ -26,18 +26,41 @@ type NodeTypes =
   | DefaultNodeTypes
   | SerializedBlockNode<CTABlockProps | MediaBlockProps | BannerBlockProps | CodeBlockProps>
 
-const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
-  const { value, relationTo } = linkNode.fields.doc!
-  if (typeof value !== 'object') {
-    throw new Error('Expected value to be an object')
-  }
-  const slug = value.slug
-  return relationTo === 'blog' ? `/blog/${slug}` : `/${slug}`
-}
-
 const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) => ({
   ...defaultConverters,
-  ...LinkJSXConverter({ internalDocToHref }),
+  link: ({ node, nodesToJSX }) => {
+    const children = nodesToJSX({ nodes: node.children })
+    const reference = node.fields.doc
+    if (
+      node.fields.linkType === 'internal' &&
+      reference &&
+      (reference.relationTo === 'pages' || reference.relationTo === 'blog')
+    ) {
+      return (
+        <CMSLink
+          type="reference"
+          reference={{
+            relationTo: reference.relationTo,
+            value:
+              typeof reference.value === 'object'
+                ? {
+                    slug: typeof reference.value.slug === 'string' ? reference.value.slug : null,
+                    site: isSite(reference.value.site) ? reference.value.site : undefined,
+                  }
+                : reference.value,
+          }}
+          newTab={node.fields.newTab}
+        >
+          {children}
+        </CMSLink>
+      )
+    }
+    return (
+      <CMSLink type="custom" url={node.fields.url} newTab={node.fields.newTab}>
+        {children}
+      </CMSLink>
+    )
+  },
   blocks: {
     banner: ({ node }) => <BannerBlock className="col-start-2 mb-4" {...node.fields} />,
     mediaBlock: ({ node }) => (

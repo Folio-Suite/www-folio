@@ -105,6 +105,7 @@ try {
     collection: 'pages',
     context,
     data: {
+      site: 'product',
       title: 'Media verification',
       slug: name,
       hero: { type: 'none' },

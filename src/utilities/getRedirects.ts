@@ -1,12 +1,14 @@
+import type { Site } from '@/sites/config'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { unstable_cache } from 'next/cache'
 
-export async function getRedirects(depth = 1) {
+export async function getRedirects(depth = 1, site: Site = 'product') {
   const payload = await getPayload({ config: configPromise })
 
   const { docs: redirects } = await payload.find({
     collection: 'redirects',
+    where: { site: { equals: site } },
     depth,
     limit: 0,
     pagination: false,

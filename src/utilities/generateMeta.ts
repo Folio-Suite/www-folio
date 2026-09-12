@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import type { Page, BlogEntry } from '../payload-types'
 import { mergeOpenGraph } from './mergeOpenGraph'
 import { getDocumentURL } from './getDocumentURL'
+import { sites } from '@/sites/config'
 import { siteDescription } from './site'
 import { documentTitle, sharingImage } from './publishingMetadata'
 
@@ -13,9 +14,14 @@ export const generateMeta = async ({
   collection?: 'blog' | 'pages'
 }): Promise<Metadata> => {
   const image = sharingImage(doc)
-  const title = documentTitle(doc)
-  const description = doc?.meta?.description || siteDescription
-  const url = getDocumentURL(collection, doc?.slug)
+  const site = collection === 'pages' && doc && 'site' in doc ? doc.site || 'product' : undefined
+  const identity = site ? sites[site] : undefined
+  const title =
+    identity && doc?.title && !doc.meta?.title
+      ? `${doc.title} | ${identity.name}`
+      : documentTitle(doc)
+  const description = doc?.meta?.description || identity?.description || siteDescription
+  const url = getDocumentURL(collection, doc?.slug, site)
   const authors = doc && 'populatedAuthors' in doc ? doc.populatedAuthors || [] : []
   // Twitter cards support one creator. Use the first assigned author's handle;
   // do not silently attribute their work to a later coauthor or the site owner.
@@ -26,6 +32,7 @@ export const generateMeta = async ({
     alternates: { canonical: url },
     openGraph: mergeOpenGraph({
       title,
+      ...(identity ? { siteName: identity.name } : {}),
       description,
       url,
       images: image ? [image] : [],
@@ -44,6 +51,7 @@ export const generateMeta = async ({
       card: image ? 'summary_large_image' : 'summary',
       creator,
       title,
+      ...(identity ? { siteName: identity.name } : {}),
       description,
       images: image ? [{ url: image.url, alt: image.alt }] : [],
     },

@@ -4,7 +4,7 @@ import { RefreshRouteOnSave as PayloadLivePreview } from '@payloadcms/live-previ
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
-export const LivePreviewListener: React.FC = () => {
+export const LivePreviewListener: React.FC<{ serverURL?: string }> = ({ serverURL }) => {
   const router = useRouter()
-  return <PayloadLivePreview refresh={router.refresh} serverURL={getClientSideURL()} />
+  return <PayloadLivePreview refresh={router.refresh} serverURL={serverURL || getClientSideURL()} />
 }

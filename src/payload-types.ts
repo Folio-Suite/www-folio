@@ -167,6 +167,10 @@ export interface UserAuthOperations {
  */
 export interface Page {
   id: number;
+  /**
+   * Choose the Product or Development site.
+   */
+  site: 'product' | 'development';
   title: string;
   hero: {
     type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact';
@@ -853,7 +857,11 @@ export interface WebmentionPublication {
 export interface Redirect {
   id: number;
   /**
-   * You will need to rebuild the website when changing this field.
+   * Choose the Product or Development site.
+   */
+  site: 'product' | 'development';
+  /**
+   * A source path reserved on the selected destination site.
    */
   from: string;
   to?: {
@@ -1143,6 +1151,7 @@ export interface PayloadMigration {
  * via the `definition` "pages_select".
  */
 export interface PagesSelect<T extends boolean = true> {
+  site?: T;
   title?: T;
   hero?:
     | T
@@ -1479,6 +1488,7 @@ export interface WebmentionPublicationsSelect<T extends boolean = true> {
  * via the `definition` "redirects_select".
  */
 export interface RedirectsSelect<T extends boolean = true> {
+  site?: T;
   from?: T;
   to?:
     | T
@@ -1776,6 +1786,26 @@ export interface Header {
         id?: string | null;
       }[]
     | null;
+  developmentNavItems?:
+    | {
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'blog';
+                value: number | BlogEntry;
+              } | null);
+          url?: string | null;
+          label: string;
+        };
+        id?: string | null;
+      }[]
+    | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1786,6 +1816,26 @@ export interface Header {
 export interface Footer {
   id: number;
   navItems?:
+    | {
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'blog';
+                value: number | BlogEntry;
+              } | null);
+          url?: string | null;
+          label: string;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  developmentNavItems?:
     | {
         link: {
           type?: ('reference' | 'custom') | null;
@@ -1827,6 +1877,20 @@ export interface HeaderSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  developmentNavItems?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1837,6 +1901,20 @@ export interface HeaderSelect<T extends boolean = true> {
  */
 export interface FooterSelect<T extends boolean = true> {
   navItems?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+        id?: T;
+      };
+  developmentNavItems?:
     | T
     | {
         link?:

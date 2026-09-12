@@ -6,11 +6,11 @@ Shared publishing foundation for `foliosuite.app` (product and user help) and `f
 
 The clean template is reconciled with the tested publishing base from `ctwelve/www-personal` at commit `250940ea88b673ca1dc7de110131dfaa2981d3cb`. The Folio repository retains its own history, administrator account, configuration, and services.
 
-This milestone intentionally serves the same common foundation on both Folio domains. Site-specific content ownership, routing, navigation, canonical identity, and previews are tracked in #2; domain-scoped blog behavior in #4 and Webmentions in #6. Do not claim those boundaries exist yet. Repository specification publication is deferred. Manual DocC publication is tracked in #7.
+Product and Development now have separate page destinations, route trees, navigation, canonical identity, sitemaps, and authenticated previews. See [site operation and architecture](docs/sites.md). Domain-scoped Blog behavior remains #4 and Webmentions remain #6. Repository specification publication is deferred. Manual DocC publication is tracked in #7.
 
 ## Development
 
-Use Node 24 and the pinned pnpm version. Run `pnpm install`, then `pnpm dev`. The ignored `.env.local` contains the Folio development configuration; preserve its integration-managed values. Set `NEXT_PUBLIC_SERVER_URL=http://localhost:3000` for local development. Production defaults to `https://foliosuite.app` until domain-aware routing lands.
+Use Node 24 and the pinned pnpm version. Run `pnpm install`, then `pnpm dev`. The ignored `.env.local` contains the Folio development configuration; preserve its integration-managed values. Set `NEXT_PUBLIC_SERVER_URL=http://localhost:3000` for local development. Local development defaults to Product; append `?site=development` to view Development. Public hosts select their own site.
 
 The common base includes Blog publishing, public author profiles, article metadata, durable published-slug redirects, RSS/Atom/JSON feeds, archives, microformats, moderated incoming Webmentions, durable outgoing deliveries, and image/video publishing. Reconciliation does not assign any personal account handle to a Folio author.
 

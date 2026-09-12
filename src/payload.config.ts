@@ -1,4 +1,5 @@
 import sharp from 'sharp'
+import { sites } from './sites/config'
 import { mediaUploadPolicy } from './media/uploadPolicy'
 import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
@@ -74,7 +75,7 @@ export default buildConfig({
     WebmentionDeliveries,
     WebmentionPublications,
   ],
-  cors: [getServerSideURL()].filter(Boolean),
+  cors: [getServerSideURL(), sites.product.origin, sites.development.origin].filter(Boolean),
   plugins: [
     ...plugins,
     vercelBlobStorage({

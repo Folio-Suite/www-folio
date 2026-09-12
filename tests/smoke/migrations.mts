@@ -30,7 +30,29 @@ try {
     VALUES ('Existing Folio Administrator', ${email}, ${salt}, ${hash})
   `)
 
+  await payload.db.drizzle.execute(sql`
+    INSERT INTO pages (title, slug, hero_type, _status)
+    VALUES ('Existing product page', 'migration-existing-page', 'none', 'published')
+  `)
   await payload.db.migrate({ migrations })
+  const existingPage = await payload.find({
+    collection: 'pages',
+    where: { slug: { equals: 'migration-existing-page' } },
+  })
+  assert.equal(existingPage.docs[0]?.site, 'product')
+  const developmentPage = await payload.create({
+    collection: 'pages',
+    context: { disableRevalidate: true },
+    data: {
+      site: 'development',
+      title: 'Development counterpart',
+      slug: 'migration-existing-page',
+      hero: { type: 'none' },
+      layout: [{ blockType: 'content', columns: [] }],
+      _status: 'published',
+    },
+  })
+  assert.equal(developmentPage.site, 'development')
   const result = await payload.login({ collection: 'users', data: { email, password } })
   assert.ok(result.user)
   assert.equal(result.user.name, 'Existing Folio Administrator')
@@ -42,7 +64,9 @@ try {
   await payload.db.migrate({ migrations })
   const history = await payload.find({ collection: 'payload-migrations', limit: 100 })
   assert.equal(history.totalDocs, migrations.length)
-  console.log('PASS: fresh schema, upgrade, preserved admin login, empty content, migration rerun.')
+  console.log(
+    'PASS: fresh schema, upgrade, preserved admin login, empty content, migration rerun, preserved Product page, same-slug Development page.',
+  )
 } finally {
   await payload.destroy()
 }

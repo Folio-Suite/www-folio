@@ -1,6 +1,6 @@
 import type { GlobalConfig } from 'payload'
 
-import { link } from '@/fields/link'
+import { navigationFields } from '@/sites/navigation'
 import { revalidateFooter } from './hooks/revalidateFooter'
 
 export const Footer: GlobalConfig = {
@@ -8,24 +8,7 @@ export const Footer: GlobalConfig = {
   access: {
     read: () => true,
   },
-  fields: [
-    {
-      name: 'navItems',
-      type: 'array',
-      fields: [
-        link({
-          appearances: false,
-        }),
-      ],
-      maxRows: 6,
-      admin: {
-        initCollapsed: true,
-        components: {
-          RowLabel: '@/Footer/RowLabel#RowLabel',
-        },
-      },
-    },
-  ],
+  fields: navigationFields('@/Footer/RowLabel#RowLabel'),
   hooks: {
     afterChange: [revalidateFooter],
   },

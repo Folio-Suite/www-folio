@@ -1,31 +1,13 @@
-import { PreviewSearchParams } from '@/app/(frontend)/next/preview/route'
-import { PayloadRequest, CollectionSlug } from 'payload'
-
-const collectionPrefixMap: Partial<Record<CollectionSlug, string>> = {
-  blog: '/blog',
-  pages: '',
-}
+import type { PayloadRequest } from 'payload'
 
 type Props = {
-  collection: keyof typeof collectionPrefixMap
-  slug: string
+  collection: 'pages' | 'blog'
+  id?: unknown
+  slug?: string | null
   req: PayloadRequest
 }
 
-export const generatePreviewPath = ({ collection, slug }: Props) => {
-  if (slug === undefined || slug === null) {
-    return null
-  }
-
-  // Encode to support slugs with special characters
-  const encodedSlug = encodeURIComponent(slug)
-
-  const encodedParams = new URLSearchParams({
-    path: `${collectionPrefixMap[collection]}/${encodedSlug}`,
-    previewSecret: process.env.PREVIEW_SECRET || '',
-  } satisfies PreviewSearchParams)
-
-  const url = `/next/preview?${encodedParams.toString()}`
-
-  return url
+export const generatePreviewPath = ({ collection, id }: Props) => {
+  if ((typeof id !== 'number' && typeof id !== 'string') || !id) return null
+  return `/next/preview?${new URLSearchParams({ collection, id: String(id) })}`
 }

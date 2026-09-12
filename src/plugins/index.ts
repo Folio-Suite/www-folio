@@ -11,6 +11,8 @@ import { searchFields } from '@/search/fieldOverrides'
 import { beforeSyncWithSearch } from '@/search/beforeSync'
 
 import { Page, BlogEntry } from '@/payload-types'
+import { reserveRedirectPath } from '@/sites/reservations'
+import { siteField } from '@/sites/fields'
 import { siteName } from '@/utilities/site'
 import { getDocumentURL } from '@/utilities/getDocumentURL'
 
@@ -22,28 +24,34 @@ const generateURL: GenerateURL<BlogEntry | Page> = ({ doc, collectionConfig, col
   getDocumentURL(
     (collectionConfig?.slug || collectionSlug) === 'blog' ? 'blog' : 'pages',
     doc?.slug,
+    doc && 'site' in doc ? doc.site : undefined,
   )
 
 export const plugins: Plugin[] = [
   redirectsPlugin({
     collections: ['pages', 'blog'],
     overrides: {
-      // @ts-expect-error - This is a valid override, mapped fields don't resolve to the same type
       fields: ({ defaultFields }) => {
-        return defaultFields.map((field) => {
-          if ('name' in field && field.name === 'from') {
-            return {
-              ...field,
-              admin: {
-                description: 'You will need to rebuild the website when changing this field.',
-              },
+        return [
+          siteField,
+          ...defaultFields.map((field) => {
+            if (field.type === 'text' && field.name === 'from') {
+              return {
+                ...field,
+                unique: false,
+                admin: {
+                  description: 'A source path reserved on the selected destination site.',
+                },
+              }
             }
-          }
-          return field
-        })
+            return field
+          }),
+        ]
       },
+      indexes: [{ fields: ['site', 'from'], unique: true }],
       hooks: {
         afterChange: [revalidateRedirects],
+        beforeChange: [reserveRedirectPath],
       },
     },
   }),

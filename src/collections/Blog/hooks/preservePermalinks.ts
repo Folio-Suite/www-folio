@@ -10,7 +10,7 @@ export const preservePermalinks: CollectionBeforeChangeHook = async ({
   const from = `/blog/${encodeURIComponent(slug)}`
   const existing = await req.payload.find({
     collection: 'redirects',
-    where: { from: { equals: from } },
+    where: { and: [{ site: { equals: 'product' } }, { from: { equals: from } }] },
     depth: 0,
     limit: 1,
     req,
@@ -37,6 +37,7 @@ export const preservePermalinks: CollectionBeforeChangeHook = async ({
       collection: 'redirects',
       req,
       data: {
+        site: 'product',
         from: `/blog/${encodeURIComponent(published.slug)}`,
         to: { type: 'reference', reference: { relationTo: 'blog', value: published.id } },
       },

@@ -57,6 +57,7 @@ export const Blog: CollectionConfig<'blog'> = {
       url: ({ data, req }) =>
         generatePreviewPath({
           slug: data?.slug,
+          id: data?.id,
           collection: 'blog',
           req,
         }),
@@ -64,6 +65,7 @@ export const Blog: CollectionConfig<'blog'> = {
     preview: (data, { req }) =>
       generatePreviewPath({
         slug: data?.slug as string,
+        id: data?.id,
         collection: 'blog',
         req,
       }),
