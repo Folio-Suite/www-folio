@@ -1,30 +1,12 @@
 import { APIError, type CollectionBeforeChangeHook } from 'payload'
+import { reservedPageSlugs, isPageSlug } from './paths'
 import { pagePath, sites, type Site } from './config'
-
-const reserved = new Set([
-  'sites',
-  'admin',
-  'api',
-  'blog',
-  'search',
-  'next',
-  'webmention',
-  'feed.xml',
-  'feed.atom',
-  'feed.json',
-  'sitemap.xml',
-  'pages-sitemap.xml',
-  'blog-sitemap.xml',
-  'robots.txt',
-  'favicon.svg',
-  '_next',
-])
 
 export const reservePagePath: CollectionBeforeChangeHook = async ({ data, originalDoc, req }) => {
   const slug = data.slug ?? originalDoc?.slug
   const site = data.site ?? originalDoc?.site ?? 'product'
   if (!slug) return data
-  if (reserved.has(slug) || /[.%/?#\\]/.test(slug) || slug === '.' || slug === '..') {
+  if (!isPageSlug(slug)) {
     throw new APIError('This page path is reserved by the website.', 400)
   }
   const redirects = await req.payload.find({
@@ -49,14 +31,25 @@ export const reserveRedirectPath: CollectionBeforeChangeHook = async ({
   const to = data.to ?? originalDoc?.to
   if (
     !from?.startsWith('/') ||
-    from.startsWith('//') ||
+    from.includes('//') ||
+    (from.length > 1 && from.endsWith('/')) ||
     /[?#\\]/.test(from) ||
     new URL(from, 'https://example.test').pathname !== from
   ) {
     throw new APIError('Use a normalized relative path for the redirect source.', 400)
   }
-  const slug = from === '/' ? 'home' : decodeURIComponent(from.slice(1))
-  if (reserved.has(slug)) throw new APIError('This path is reserved by the website.', 400)
+  const segments = from.slice(1).split('/')
+  if (['api', 'admin', 'next', '_next', 'sites'].includes(segments[0]))
+    throw new APIError('This redirect source is reserved by the website.', 400)
+  if (segments[0] === 'blog' && segments.length > 2)
+    throw new APIError('This redirect source is reserved by Blog routing.', 400)
+  let slug: string
+  try {
+    slug = from === '/' ? 'home' : decodeURIComponent(from.slice(1))
+  } catch {
+    throw new APIError('Use a valid encoded redirect path.', 400)
+  }
+  if (reservedPageSlugs.has(slug)) throw new APIError('This path is reserved by the website.', 400)
   const pages = await req.payload.find({
     collection: 'pages',
     req,

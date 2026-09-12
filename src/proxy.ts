@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server'
+import { isEditorialPath } from './sites/paths'
 import { isSite, resolveSite } from './sites/config'
 
 export function proxy(request: NextRequest) {
@@ -18,9 +19,7 @@ export function proxy(request: NextRequest) {
     headers.set('cookie', request.cookies.toString())
   }
   const path = request.nextUrl.pathname
-  const reserved = ['admin', 'api', 'blog', 'search', 'next', 'webmention']
-  const isPage =
-    path === '/' || (/^\/[^/.]+\/?$/.test(path) && !reserved.includes(path.split('/')[1]))
+  const isPage = isEditorialPath(path)
   const destinationURL = request.nextUrl.clone()
   destinationURL.pathname = `/sites/${destination.site}${path === '/' ? '' : path}`
   const response = isPage
@@ -35,4 +34,6 @@ export function proxy(request: NextRequest) {
   return response
 }
 
-export const config = { matcher: ['/((?!_next/static|_next/image|favicon|api/media/file).*)'] }
+export const config = {
+  matcher: ['/((?!_next/static|_next/image|favicon\\.svg$|favicon\\.ico$|api/media/file).*)'],
+}

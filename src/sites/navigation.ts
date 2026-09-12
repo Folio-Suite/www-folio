@@ -14,3 +14,14 @@ export function navigationFields(rowLabel: string): ArrayField[] {
     admin: { initCollapsed: true, components: { RowLabel: rowLabel } },
   }))
 }
+
+// Public globals may contain unresolved references when the target is unpublished.
+export function publishedNavigation(items: import('@/payload-types').Header['navItems']) {
+  return (items || []).filter(
+    ({ link }) =>
+      link.type !== 'reference' ||
+      (link.reference?.value &&
+        typeof link.reference.value === 'object' &&
+        Boolean(link.reference.value.slug)),
+  )
+}

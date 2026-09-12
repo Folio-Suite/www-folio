@@ -33,7 +33,7 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
     const reference = node.fields.doc
     if (
       node.fields.linkType === 'internal' &&
-      reference &&
+      reference?.value != null &&
       (reference.relationTo === 'pages' || reference.relationTo === 'blog')
     ) {
       return (

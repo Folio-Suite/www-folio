@@ -274,3 +274,165 @@ test('an authenticated editor can preview Development without publishing drafts 
     await payload.destroy()
   }
 })
+
+test('public menus hide draft references, favicon-prefixed pages work, and nested redirects resolve by site', async ({
+  page,
+  request,
+}) => {
+  const { getPayload } = await import('payload')
+  const { default: config } = await import('../../src/payload.config')
+  const payload = await getPayload({ config, key: 'sites-review' })
+  const context = { disableRevalidate: true }
+  const original = await payload.findGlobal({ slug: 'header', depth: 0 })
+  const user = await payload.create({
+    collection: 'users',
+    data: { email: 'site-review@example.test', password: 'site-review-test' },
+  })
+  await page.request.post('http://localhost:3000/api/users/login', {
+    data: { email: user.email, password: 'site-review-test' },
+  })
+  const ids: number[] = []
+  try {
+    for (const site of ['product', 'development'] as const) {
+      ids.push(
+        (
+          await payload.create({
+            collection: 'pages',
+            context,
+            data: {
+              site,
+              title: `${site} hidden`,
+              slug: `${site}-hidden-navigation`,
+              hero: { type: 'none' },
+              layout: [{ blockType: 'content', columns: [] }],
+              _status: 'draft',
+            },
+          })
+        ).id,
+      )
+    }
+    const published = await payload.create({
+      collection: 'pages',
+      context,
+      data: {
+        site: 'development',
+        title: 'Favicon guide',
+        slug: 'favicon-guide',
+        hero: { type: 'none' },
+        layout: [{ blockType: 'content', columns: [] }],
+        _status: 'published',
+      },
+    })
+    ids.push(published.id)
+    await page.request.post('http://localhost:3000/api/globals/header', {
+      data: {
+        navItems: [
+          {
+            link: {
+              type: 'reference',
+              label: 'Unpublished product menu item',
+              reference: { relationTo: 'pages', value: ids[0] },
+            },
+          },
+        ],
+        developmentNavItems: [
+          {
+            link: {
+              type: 'reference',
+              label: 'Unpublished development menu item',
+              reference: { relationTo: 'pages', value: ids[1] },
+            },
+          },
+        ],
+      },
+    })
+    for (const host of ['foliosuite.app', 'foliosuite.dev']) {
+      const response = await request.get('http://localhost:3000/', { headers: { host } })
+      expect(response.status()).toBe(200)
+      const html = await response.text()
+      expect(html).not.toContain('-hidden-navigation')
+      expect(html).not.toContain('Unpublished')
+    }
+    await page.request.post('http://localhost:3000/api/globals/header', {
+      data: {
+        developmentNavItems: [
+          {
+            link: {
+              type: 'reference',
+              label: 'Visible then unpublished',
+              reference: { relationTo: 'pages', value: published.id },
+            },
+          },
+        ],
+      },
+    })
+    expect(
+      await (
+        await request.get('http://localhost:3000/', { headers: { host: 'foliosuite.dev' } })
+      ).text(),
+    ).toContain('Visible then unpublished')
+    expect(
+      (
+        await page.request.patch(`http://localhost:3000/api/pages/${published.id}`, {
+          data: { _status: 'draft' },
+        })
+      ).status(),
+    ).toBe(200)
+    expect(
+      await (
+        await request.get('http://localhost:3000/', { headers: { host: 'foliosuite.dev' } })
+      ).text(),
+    ).not.toContain('Visible then unpublished')
+    expect(
+      (
+        await page.request.patch(`http://localhost:3000/api/pages/${published.id}`, {
+          data: { _status: 'published' },
+        })
+      ).status(),
+    ).toBe(200)
+    expect(
+      (
+        await request.get('http://localhost:3000/favicon-guide', {
+          headers: { host: 'foliosuite.dev' },
+        })
+      ).status(),
+    ).toBe(200)
+    for (const source of ['/legacy/nested-path', '/legacy/caf%C3%A9', '/legacy/100%25']) {
+      for (const site of ['product', 'development'] as const) {
+        await payload.create({
+          collection: 'redirects',
+          context,
+          data: {
+            site,
+            from: source,
+            to: {
+              type: 'custom',
+              url: site === 'product' ? '/product-destination' : '/development-destination',
+            },
+          },
+        })
+      }
+      for (const [host, target] of [
+        ['foliosuite.app', '/product-destination'],
+        ['foliosuite.dev', '/development-destination'],
+      ]) {
+        const response = await request.get(`http://localhost:3000${source}`, {
+          headers: { host },
+          maxRedirects: 0,
+        })
+        expect(response.status()).toBe(308)
+        expect(response.headers().location).toBe(target)
+      }
+    }
+  } finally {
+    await page.request.post('http://localhost:3000/api/globals/header', { data: original })
+    await payload.delete({
+      collection: 'redirects',
+      context,
+      where: { from: { in: ['/legacy/nested-path', '/legacy/caf%C3%A9', '/legacy/100%25'] } },
+    })
+    for (const id of ids) await payload.delete({ collection: 'pages', id, context })
+    await payload.delete({ collection: 'users', id: user.id })
+    await payload.destroy()
+  }
+})

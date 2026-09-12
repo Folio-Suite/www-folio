@@ -10,6 +10,8 @@ export const revalidateBlogEntry: CollectionAfterChangeHook<BlogEntry> = ({
   req: { payload, context },
 }) => {
   if (!context.disableRevalidate) {
+    revalidateTag('global_header', { expire: 0 })
+    revalidateTag('global_footer', { expire: 0 })
     revalidatePath('/blog', 'layout')
     revalidateTag('blog-content', 'max')
     revalidateTag('redirects', 'max')
@@ -23,7 +25,10 @@ export const revalidateBlogEntry: CollectionAfterChangeHook<BlogEntry> = ({
     }
 
     // If the post was previously published, we need to revalidate the old path
-    if (previousDoc._status === 'published' && (doc._status !== 'published' || previousDoc.slug !== doc.slug)) {
+    if (
+      previousDoc._status === 'published' &&
+      (doc._status !== 'published' || previousDoc.slug !== doc.slug)
+    ) {
       const oldPath = `/blog/${previousDoc.slug}`
 
       payload.logger.info(`Revalidating old post at path: ${oldPath}`)
@@ -40,6 +45,8 @@ export const revalidateDelete: CollectionAfterDeleteHook<BlogEntry> = ({
   req: { context },
 }) => {
   if (!context.disableRevalidate) {
+    revalidateTag('global_header', { expire: 0 })
+    revalidateTag('global_footer', { expire: 0 })
     revalidatePath('/blog', 'layout')
     revalidateTag('blog-content', 'max')
     revalidateTag('redirects', 'max')

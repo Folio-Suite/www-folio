@@ -1,3 +1,4 @@
+import { publishedNavigation } from '@/sites/navigation'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import Link from 'next/link'
 import React from 'react'
@@ -13,8 +14,9 @@ export async function Footer() {
     getRequestSite(),
   ])
 
-  const navItems =
-    (site === 'development' ? footerData.developmentNavItems : footerData.navItems) || []
+  const navItems = publishedNavigation(
+    site === 'development' ? footerData.developmentNavItems : footerData.navItems,
+  )
 
   return (
     <footer className="mt-auto border-t border-border bg-black dark:bg-card text-white">
