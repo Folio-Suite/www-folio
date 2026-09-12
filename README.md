@@ -18,7 +18,7 @@ Uploaded originals and derivatives use `media/`. Supported images are JPEG, PNG,
 
 ## Email and background work
 
-Resend support is present but requires the Folio project's own `RESEND_API_KEY` and verified `EMAIL_FROM_ADDRESS`; `EMAIL_FROM_NAME` defaults to Folio Suite. The placeholder address is `webmaster@foliosuite.app`. Account and form emails will not deliver until the service is configured. No personal-site email credentials or sender identity are inherited.
+Resend is connected to the Folio project's Production and Preview environments. Payload uses the integration's `RESEND_API_KEY` and sends as `Folio Suite <webmaster@foliosuite.dev>` by default. The sender domain follows `RESEND_EMAIL_DOMAIN`; `EMAIL_FROM_ADDRESS` overrides the entire address and `EMAIL_FROM_NAME` overrides the display name. Local development has no email key by default. No personal-site email credentials or sender identity are inherited.
 
 Webmention jobs persist in Payload. Next.js post-response work starts them; the authenticated daily Cron is a recovery path and requires `CRON_SECRET`. Failures have bounded retries and an admin retry control. Daily Cron recovery may delay retries until the next run. Public verification uses URL/DNS validation, redirect/time/size bounds, and durable submission limits.
 

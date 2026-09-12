@@ -115,7 +115,9 @@ export default buildConfig({
     tasks: [verifyWebmention, sendWebmention],
   },
   email: resendAdapter({
-    defaultFromAddress: process.env.EMAIL_FROM_ADDRESS || 'webmaster@foliosuite.app',
+    defaultFromAddress:
+      process.env.EMAIL_FROM_ADDRESS ||
+      `webmaster@${process.env.RESEND_EMAIL_DOMAIN || 'foliosuite.dev'}`,
     defaultFromName: process.env.EMAIL_FROM_NAME || 'Folio Suite',
     apiKey: process.env.RESEND_API_KEY || '',
   }),
