@@ -1,49 +1,51 @@
 import type { Metadata } from 'next'
-
-import type { Media, Page, Post, Config } from '../payload-types'
-
+import type { Page, BlogEntry } from '../payload-types'
 import { mergeOpenGraph } from './mergeOpenGraph'
-import { getServerSideURL } from './getURL'
+import { getDocumentURL } from './getDocumentURL'
+import { siteDescription } from './site'
+import { documentTitle, sharingImage } from './publishingMetadata'
 
-const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
-  const serverUrl = getServerSideURL()
-
-  let url = serverUrl + '/website-template-OG.webp'
-
-  if (image && typeof image === 'object' && 'url' in image) {
-    const ogUrl = image.sizes?.og?.url
-
-    url = ogUrl ? serverUrl + ogUrl : serverUrl + image.url
-  }
-
-  return url
-}
-
-export const generateMeta = async (args: {
-  doc: Partial<Page> | Partial<Post> | null
+export const generateMeta = async ({
+  doc,
+  collection = 'pages',
+}: {
+  doc: Partial<Page> | Partial<BlogEntry> | null
+  collection?: 'blog' | 'pages'
 }): Promise<Metadata> => {
-  const { doc } = args
-
-  const ogImage = getImageURL(doc?.meta?.image)
-
-  const title = doc?.meta?.title
-    ? doc?.meta?.title + ' | Payload Website Template'
-    : 'Payload Website Template'
-
+  const image = sharingImage(doc)
+  const title = documentTitle(doc)
+  const description = doc?.meta?.description || siteDescription
+  const url = getDocumentURL(collection, doc?.slug)
+  const authors = doc && 'populatedAuthors' in doc ? doc.populatedAuthors || [] : []
+  // Twitter cards support one creator. Use the first assigned author's handle;
+  // do not silently attribute their work to a later coauthor or the site owner.
+  const creator = authors[0]?.twitterHandle || undefined
   return {
-    description: doc?.meta?.description,
-    openGraph: mergeOpenGraph({
-      description: doc?.meta?.description || '',
-      images: ogImage
-        ? [
-            {
-              url: ogImage,
-            },
-          ]
-        : undefined,
-      title,
-      url: Array.isArray(doc?.slug) ? doc?.slug.join('/') : '/',
-    }),
     title,
+    description,
+    alternates: { canonical: url },
+    openGraph: mergeOpenGraph({
+      title,
+      description,
+      url,
+      images: image ? [image] : [],
+      ...(collection === 'blog'
+        ? {
+            type: 'article' as const,
+            publishedTime: doc?.publishedAt || undefined,
+            modifiedTime: doc?.updatedAt || undefined,
+            authors: authors.flatMap((author) =>
+              author.twitterHandle ? [`https://x.com/${author.twitterHandle.slice(1)}`] : [],
+            ),
+          }
+        : { type: 'website' as const }),
+    }),
+    twitter: {
+      card: image ? 'summary_large_image' : 'summary',
+      creator,
+      title,
+      description,
+      images: image ? [{ url: image.url, alt: image.alt }] : [],
+    },
   }
 }

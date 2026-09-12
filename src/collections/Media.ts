@@ -5,6 +5,7 @@ import {
   InlineToolbarFeature,
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
+import { mediaMimeTypes, validateMediaUpload } from '../media/uploadPolicy'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
@@ -23,7 +24,59 @@ export const Media: CollectionConfig = {
     read: anyone,
     update: authenticated,
   },
+  admin: {
+    description:
+      'Images: JPEG, PNG, WebP, AVIF, GIF. Video: MP4 (H.264/AAC recommended), WebM. Maximum 100 MiB. Video is served as uploaded; no transcoding.',
+  },
+  hooks: { beforeValidate: [validateMediaUpload] },
   fields: [
+    { name: 'title', type: 'text' },
+    { name: 'description', type: 'textarea' },
+    {
+      name: 'poster',
+      type: 'upload',
+      relationTo: 'media',
+      maxDepth: 1,
+      filterOptions: { mimeType: { contains: 'image/' } },
+      admin: { condition: (data) => data.mimeType?.startsWith('video/') },
+    },
+    {
+      name: 'captionTracks',
+      type: 'array',
+      admin: {
+        description: 'WebVTT (.vtt) URLs. Cross-origin tracks require CORS on their server.',
+        condition: (data) => data.mimeType?.startsWith('video/'),
+      },
+      fields: [
+        { name: 'label', type: 'text', required: true },
+        {
+          name: 'language',
+          type: 'text',
+          required: true,
+          validate: (value: string | null | undefined) =>
+            !value ||
+            /^[a-z]{2,3}(-[a-zA-Z0-9]{2,8})*$/.test(value) ||
+            'Use a language tag such as en or en-US.',
+        },
+        {
+          name: 'url',
+          type: 'text',
+          required: true,
+          validate: (value: string | null | undefined) => {
+            if (!value) return true
+            try {
+              const url = new URL(value, 'https://foliosuite.app')
+              return (
+                (url.protocol === 'https:' && url.pathname.endsWith('.vtt')) ||
+                'Use an HTTPS or site-relative WebVTT (.vtt) URL.'
+              )
+            } catch {
+              return 'Use a valid WebVTT URL.'
+            }
+          },
+        },
+      ],
+    },
     {
       name: 'alt',
       type: 'text',
@@ -40,6 +93,7 @@ export const Media: CollectionConfig = {
     },
   ],
   upload: {
+    mimeTypes: mediaMimeTypes,
     // Upload to the public/media directory in Next.js making them publicly accessible even outside of Payload
     staticDir: path.resolve(dirname, '../../public/media'),
     adminThumbnail: 'thumbnail',
@@ -53,22 +107,6 @@ export const Media: CollectionConfig = {
         name: 'square',
         width: 500,
         height: 500,
-      },
-      {
-        name: 'small',
-        width: 600,
-      },
-      {
-        name: 'medium',
-        width: 900,
-      },
-      {
-        name: 'large',
-        width: 1400,
-      },
-      {
-        name: 'xlarge',
-        width: 1920,
       },
       {
         name: 'og',

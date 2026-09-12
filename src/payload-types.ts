@@ -68,10 +68,14 @@ export interface Config {
   blocks: {};
   collections: {
     pages: Page;
-    posts: Post;
+    blog: BlogEntry;
     media: Media;
     categories: Category;
     users: User;
+    webmentions: Webmention;
+    'webmention-limits': WebmentionLimit;
+    'webmention-deliveries': WebmentionDelivery;
+    'webmention-publications': WebmentionPublication;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -90,10 +94,14 @@ export interface Config {
   };
   collectionsSelect: {
     pages: PagesSelect<false> | PagesSelect<true>;
-    posts: PostsSelect<false> | PostsSelect<true>;
+    blog: BlogSelect<false> | BlogSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    webmentions: WebmentionsSelect<false> | WebmentionsSelect<true>;
+    'webmention-limits': WebmentionLimitsSelect<false> | WebmentionLimitsSelect<true>;
+    'webmention-deliveries': WebmentionDeliveriesSelect<false> | WebmentionDeliveriesSelect<true>;
+    'webmention-publications': WebmentionPublicationsSelect<false> | WebmentionPublicationsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -124,6 +132,8 @@ export interface Config {
   user: User;
   jobs: {
     tasks: {
+      verifyWebmention: TaskVerifyWebmention;
+      sendWebmention: TaskSendWebmention;
       schedulePublish: TaskSchedulePublish;
       inline: {
         input: unknown;
@@ -186,8 +196,8 @@ export interface Page {
                   value: number | Page;
                 } | null)
               | ({
-                  relationTo: 'posts';
-                  value: number | Post;
+                  relationTo: 'blog';
+                  value: number | BlogEntry;
                 } | null);
             url?: string | null;
             label: string;
@@ -222,9 +232,9 @@ export interface Page {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "posts".
+ * via the `definition` "blog".
  */
-export interface Post {
+export interface BlogEntry {
   id: number;
   title: string;
   heroImage?: (number | null) | Media;
@@ -243,7 +253,7 @@ export interface Post {
     };
     [k: string]: unknown;
   };
-  relatedPosts?: (number | Post)[] | null;
+  relatedEntries?: (number | BlogEntry)[] | null;
   categories?: (number | Category)[] | null;
   meta?: {
     title?: string | null;
@@ -257,6 +267,7 @@ export interface Post {
   authors?: (number | User)[] | null;
   populatedAuthors?:
     | {
+        twitterHandle?: string | null;
         id?: string | null;
         name?: string | null;
       }[]
@@ -271,11 +282,27 @@ export interface Post {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Images: JPEG, PNG, WebP, AVIF, GIF. Video: MP4 (H.264/AAC recommended), WebM. Maximum 100 MiB. Video is served as uploaded; no transcoding.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
 export interface Media {
   id: number;
+  title?: string | null;
+  description?: string | null;
+  poster?: (number | null) | Media;
+  /**
+   * WebVTT (.vtt) URLs. Cross-origin tracks require CORS on their server.
+   */
+  captionTracks?:
+    | {
+        label: string;
+        language: string;
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
   alt?: string | null;
   caption?: {
     root: {
@@ -292,6 +319,7 @@ export interface Media {
     };
     [k: string]: unknown;
   } | null;
+  prefix?: string | null;
   folder?: (number | null) | FolderInterface;
   updatedAt: string;
   createdAt: string;
@@ -314,38 +342,6 @@ export interface Media {
       filename?: string | null;
     };
     square?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    small?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    medium?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    large?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    xlarge?: {
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -419,6 +415,10 @@ export interface Category {
  */
 export interface User {
   id: number;
+  /**
+   * Optional public attribution, for example @TheCTwelve.
+   */
+  twitterHandle?: string | null;
   name?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -470,8 +470,8 @@ export interface CallToActionBlock {
                 value: number | Page;
               } | null)
             | ({
-                relationTo: 'posts';
-                value: number | Post;
+                relationTo: 'blog';
+                value: number | BlogEntry;
               } | null);
           url?: string | null;
           label: string;
@@ -520,8 +520,8 @@ export interface ContentBlock {
                 value: number | Page;
               } | null)
             | ({
-                relationTo: 'posts';
-                value: number | Post;
+                relationTo: 'blog';
+                value: number | BlogEntry;
               } | null);
           url?: string | null;
           label: string;
@@ -542,6 +542,10 @@ export interface ContentBlock {
  * via the `definition` "MediaBlock".
  */
 export interface MediaBlock {
+  decorative?: boolean | null;
+  autoplay?: boolean | null;
+  loop?: boolean | null;
+  muted?: boolean | null;
   media: number | Media;
   id?: string | null;
   blockName?: string | null;
@@ -568,13 +572,13 @@ export interface ArchiveBlock {
     [k: string]: unknown;
   } | null;
   populateBy?: ('collection' | 'selection') | null;
-  relationTo?: 'posts' | null;
+  relationTo?: 'blog' | null;
   categories?: (number | Category)[] | null;
   limit?: number | null;
   selectedDocs?:
     | {
-        relationTo: 'posts';
-        value: number | Post;
+        relationTo: 'blog';
+        value: number | BlogEntry;
       }[]
     | null;
   id?: string | null;
@@ -724,9 +728,6 @@ export interface Form {
       )[]
     | null;
   submitButtonLabel?: string | null;
-  /**
-   * Choose whether to display an on-page message or redirect to a different page after they submit the form.
-   */
   confirmationType?: ('message' | 'redirect') | null;
   confirmationMessage?: {
     root: {
@@ -746,9 +747,6 @@ export interface Form {
   redirect?: {
     url: string;
   };
-  /**
-   * Send custom emails when the form submits. Use comma separated lists to send the same email to multiple recipients. To reference a value from this form, wrap that field's name with double curly brackets, i.e. {{firstName}}. You can use a wildcard {{*}} to output all data and {{*:table}} to format it as an HTML table in the email.
-   */
   emails?:
     | {
         emailTo?: string | null;
@@ -757,9 +755,6 @@ export interface Form {
         replyTo?: string | null;
         emailFrom?: string | null;
         subject: string;
-        /**
-         * Enter the message that should be sent in this email.
-         */
         message?: {
           root: {
             type: string;
@@ -783,6 +778,76 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "webmentions".
+ */
+export interface Webmention {
+  id: number;
+  key: string;
+  source: string;
+  target: number | BlogEntry;
+  sourceTitle?: string | null;
+  fingerprint?: string | null;
+  verification: 'pending' | 'verified' | 'invalid' | 'error';
+  moderation: 'pending' | 'approved' | 'rejected';
+  error?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "webmention-limits".
+ */
+export interface WebmentionLimit {
+  id: number;
+  bucket: string;
+  count: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "webmention-deliveries".
+ */
+export interface WebmentionDelivery {
+  id: number;
+  key: string;
+  entry: number | BlogEntry;
+  source: string;
+  target: string;
+  endpoint?: string | null;
+  state: 'pending' | 'sent' | 'no-endpoint' | 'failed' | 'canceled';
+  attempts?: number | null;
+  error?: string | null;
+  /**
+   * Select and save to queue a fresh, bounded retry.
+   */
+  retry?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "webmention-publications".
+ */
+export interface WebmentionPublication {
+  id: number;
+  entry: number | BlogEntry;
+  fingerprint: string;
+  revision: number;
+  targets?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -799,8 +864,8 @@ export interface Redirect {
           value: number | Page;
         } | null)
       | ({
-          relationTo: 'posts';
-          value: number | Post;
+          relationTo: 'blog';
+          value: number | BlogEntry;
         } | null);
     url?: string | null;
   };
@@ -835,8 +900,8 @@ export interface Search {
   title?: string | null;
   priority?: number | null;
   doc: {
-    relationTo: 'posts';
-    value: number | Post;
+    relationTo: 'blog';
+    value: number | BlogEntry;
   };
   slug?: string | null;
   meta?: {
@@ -924,7 +989,7 @@ export interface PayloadJob {
     | {
         executedAt: string;
         completedAt: string;
-        taskSlug: 'inline' | 'schedulePublish';
+        taskSlug: 'inline' | 'verifyWebmention' | 'sendWebmention' | 'schedulePublish';
         taskID: string;
         input?:
           | {
@@ -957,10 +1022,14 @@ export interface PayloadJob {
         id?: string | null;
       }[]
     | null;
-  taskSlug?: ('inline' | 'schedulePublish') | null;
+  taskSlug?: ('inline' | 'verifyWebmention' | 'sendWebmention' | 'schedulePublish') | null;
   queue?: string | null;
   waitUntil?: string | null;
   processing?: boolean | null;
+  /**
+   * Used for concurrency control. Jobs with the same key are subject to exclusive/supersedes rules.
+   */
+  concurrencyKey?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -976,8 +1045,8 @@ export interface PayloadLockedDocument {
         value: number | Page;
       } | null)
     | ({
-        relationTo: 'posts';
-        value: number | Post;
+        relationTo: 'blog';
+        value: number | BlogEntry;
       } | null)
     | ({
         relationTo: 'media';
@@ -990,6 +1059,22 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'users';
         value: number | User;
+      } | null)
+    | ({
+        relationTo: 'webmentions';
+        value: number | Webmention;
+      } | null)
+    | ({
+        relationTo: 'webmention-limits';
+        value: number | WebmentionLimit;
+      } | null)
+    | ({
+        relationTo: 'webmention-deliveries';
+        value: number | WebmentionDelivery;
+      } | null)
+    | ({
+        relationTo: 'webmention-publications';
+        value: number | WebmentionPublication;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -1159,6 +1244,10 @@ export interface ContentBlockSelect<T extends boolean = true> {
  * via the `definition` "MediaBlock_select".
  */
 export interface MediaBlockSelect<T extends boolean = true> {
+  decorative?: T;
+  autoplay?: T;
+  loop?: T;
+  muted?: T;
   media?: T;
   id?: T;
   blockName?: T;
@@ -1190,13 +1279,13 @@ export interface FormBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "posts_select".
+ * via the `definition` "blog_select".
  */
-export interface PostsSelect<T extends boolean = true> {
+export interface BlogSelect<T extends boolean = true> {
   title?: T;
   heroImage?: T;
   content?: T;
-  relatedPosts?: T;
+  relatedEntries?: T;
   categories?: T;
   meta?:
     | T
@@ -1210,6 +1299,7 @@ export interface PostsSelect<T extends boolean = true> {
   populatedAuthors?:
     | T
     | {
+        twitterHandle?: T;
         id?: T;
         name?: T;
       };
@@ -1224,8 +1314,20 @@ export interface PostsSelect<T extends boolean = true> {
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  poster?: T;
+  captionTracks?:
+    | T
+    | {
+        label?: T;
+        language?: T;
+        url?: T;
+        id?: T;
+      };
   alt?: T;
   caption?: T;
+  prefix?: T;
   folder?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1252,46 +1354,6 @@ export interface MediaSelect<T extends boolean = true> {
               filename?: T;
             };
         square?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        small?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        medium?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        large?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        xlarge?:
           | T
           | {
               url?: T;
@@ -1338,6 +1400,7 @@ export interface CategoriesSelect<T extends boolean = true> {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  twitterHandle?: T;
   name?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1355,6 +1418,61 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "webmentions_select".
+ */
+export interface WebmentionsSelect<T extends boolean = true> {
+  key?: T;
+  source?: T;
+  target?: T;
+  sourceTitle?: T;
+  fingerprint?: T;
+  verification?: T;
+  moderation?: T;
+  error?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "webmention-limits_select".
+ */
+export interface WebmentionLimitsSelect<T extends boolean = true> {
+  bucket?: T;
+  count?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "webmention-deliveries_select".
+ */
+export interface WebmentionDeliveriesSelect<T extends boolean = true> {
+  key?: T;
+  entry?: T;
+  source?: T;
+  target?: T;
+  endpoint?: T;
+  state?: T;
+  attempts?: T;
+  error?: T;
+  retry?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "webmention-publications_select".
+ */
+export interface WebmentionPublicationsSelect<T extends boolean = true> {
+  entry?: T;
+  fingerprint?: T;
+  revision?: T;
+  targets?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1584,6 +1702,7 @@ export interface PayloadJobsSelect<T extends boolean = true> {
   queue?: T;
   waitUntil?: T;
   processing?: T;
+  concurrencyKey?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1648,8 +1767,8 @@ export interface Header {
                 value: number | Page;
               } | null)
             | ({
-                relationTo: 'posts';
-                value: number | Post;
+                relationTo: 'blog';
+                value: number | BlogEntry;
               } | null);
           url?: string | null;
           label: string;
@@ -1677,8 +1796,8 @@ export interface Footer {
                 value: number | Page;
               } | null)
             | ({
-                relationTo: 'posts';
-                value: number | Post;
+                relationTo: 'blog';
+                value: number | BlogEntry;
               } | null);
           url?: string | null;
           label: string;
@@ -1747,6 +1866,26 @@ export interface CollectionsWidget {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskVerifyWebmention".
+ */
+export interface TaskVerifyWebmention {
+  input: {
+    id: number;
+  };
+  output?: unknown;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskSendWebmention".
+ */
+export interface TaskSendWebmention {
+  input: {
+    id: number;
+  };
+  output?: unknown;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "TaskSchedulePublish".
  */
 export interface TaskSchedulePublish {
@@ -1759,8 +1898,8 @@ export interface TaskSchedulePublish {
           value: number | Page;
         } | null)
       | ({
-          relationTo: 'posts';
-          value: number | Post;
+          relationTo: 'blog';
+          value: number | BlogEntry;
         } | null);
     global?: string | null;
     user?: (number | null) | User;

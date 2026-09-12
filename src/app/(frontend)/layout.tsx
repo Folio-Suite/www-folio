@@ -16,6 +16,9 @@ import { draftMode } from 'next/headers'
 import './globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
 
+import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { isEnabled } = await draftMode()
 
@@ -23,8 +26,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html className={cn(GeistSans.variable, GeistMono.variable)} lang="en" suppressHydrationWarning>
       <head>
         <InitTheme />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="/feed.xml" />
+        <link rel="alternate" type="application/atom+xml" title="Atom" href="/feed.atom" />
+        <link rel="alternate" type="application/feed+json" title="JSON Feed" href="/feed.json" />
         <link href="/favicon.ico" rel="icon" sizes="32x32" />
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
+        {/* Vercel Analytics and Speed Insights scripts */}
+        <SpeedInsights />
+        <Analytics />
       </head>
       <body>
         <Providers>
@@ -48,6 +57,5 @@ export const metadata: Metadata = {
   openGraph: mergeOpenGraph(),
   twitter: {
     card: 'summary_large_image',
-    creator: '@payloadcms',
   },
 }

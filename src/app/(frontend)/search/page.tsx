@@ -17,7 +17,7 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
   const { q: query } = await searchParamsPromise
   const payload = await getPayload({ config: configPromise })
 
-  const posts = await payload.find({
+  const blog = await payload.find({
     collection: 'search',
     depth: 1,
     limit: 12,
@@ -72,8 +72,8 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
         </div>
       </div>
 
-      {posts.totalDocs > 0 ? (
-        <CollectionArchive posts={posts.docs as CardPostData[]} />
+      {blog.totalDocs > 0 ? (
+        <CollectionArchive blog={blog.docs as CardPostData[]} />
       ) : (
         <div className="container">No results found.</div>
       )}
@@ -83,6 +83,6 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
 
 export function generateMetadata(): Metadata {
   return {
-    title: `Payload Website Template Search`,
+    title: `Search | Folio Suite`,
   }
 }

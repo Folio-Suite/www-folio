@@ -1,46 +1,45 @@
 'use client'
 
 import { cn } from '@/utilities/ui'
-import React, { useEffect, useRef } from 'react'
-
+import React from 'react'
 import type { Props as MediaProps } from '../types'
-
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 
-export const VideoMedia: React.FC<MediaProps> = (props) => {
-  const { onClick, resource, videoClassName } = props
-
-  const videoRef = useRef<HTMLVideoElement>(null)
-  // const [showFallback] = useState<boolean>()
-
-  useEffect(() => {
-    const { current: video } = videoRef
-    if (video) {
-      video.addEventListener('suspend', () => {
-        // setShowFallback(true);
-        // console.warn('Video was suspended, rendering fallback image.')
-      })
-    }
-  }, [])
-
-  if (resource && typeof resource === 'object') {
-    const { filename } = resource
-
-    return (
-      <video
-        autoPlay
-        className={cn(videoClassName)}
-        controls={false}
-        loop
-        muted
-        onClick={onClick}
-        playsInline
-        ref={videoRef}
-      >
-        <source src={getMediaUrl(`/media/${filename}`)} />
-      </video>
-    )
-  }
-
-  return null
+export const VideoMedia: React.FC<MediaProps> = ({
+  onClick,
+  resource,
+  videoClassName,
+  autoplay,
+  loop,
+  muted,
+}) => {
+  if (!resource || typeof resource !== 'object' || !resource.url) return null
+  const poster =
+    resource.poster && typeof resource.poster === 'object' ? resource.poster.url : undefined
+  return (
+    <video
+      className={cn('w-full aspect-video', videoClassName)}
+      controls
+      autoPlay={autoplay || false}
+      loop={loop || false}
+      muted={Boolean(autoplay || muted)}
+      crossOrigin={resource.captionTracks?.length ? 'anonymous' : undefined}
+      aria-label={resource.title || resource.alt || undefined}
+      poster={poster ? getMediaUrl(poster) : undefined}
+      onClick={onClick}
+      playsInline
+      preload="metadata"
+    >
+      <source src={getMediaUrl(resource.url)} type={resource.mimeType || undefined} />
+      {resource.captionTracks?.map((track) => (
+        <track
+          key={track.id || track.url}
+          kind="captions"
+          src={getMediaUrl(track.url)}
+          srcLang={track.language}
+          label={track.label}
+        />
+      ))}
+    </video>
+  )
 }

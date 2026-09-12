@@ -6,6 +6,7 @@ import RichText from '@/components/RichText'
 
 import type { MediaBlock as MediaBlockProps } from '@/payload-types'
 
+import { serializeSchema, videoSchema } from '@/utilities/publishingMetadata'
 import { Media } from '../../components/Media'
 
 type Props = MediaBlockProps & {
@@ -20,6 +21,10 @@ type Props = MediaBlockProps & {
 
 export const MediaBlock: React.FC<Props> = (props) => {
   const {
+    decorative,
+    autoplay,
+    loop,
+    muted,
     captionClassName,
     className,
     enableGutter = true,
@@ -33,7 +38,7 @@ export const MediaBlock: React.FC<Props> = (props) => {
   if (media && typeof media === 'object') caption = media.caption
 
   return (
-    <div
+    <figure
       className={cn(
         '',
         {
@@ -42,15 +47,25 @@ export const MediaBlock: React.FC<Props> = (props) => {
         className,
       )}
     >
+      {media && typeof media === 'object' && media.mimeType?.startsWith('video/') && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: serializeSchema(videoSchema(media)) }}
+        />
+      )}
       {(media || staticImage) && (
         <Media
           imgClassName={cn('border border-border rounded-[0.8rem]', imgClassName)}
           resource={media}
+          alt={decorative ? '' : undefined}
+          autoplay={autoplay}
+          loop={loop}
+          muted={muted}
           src={staticImage}
         />
       )}
       {caption && (
-        <div
+        <figcaption
           className={cn(
             'mt-6',
             {
@@ -60,8 +75,8 @@ export const MediaBlock: React.FC<Props> = (props) => {
           )}
         >
           <RichText data={caption} enableGutter={false} />
-        </div>
+        </figcaption>
       )}
-    </div>
+    </figure>
   )
 }

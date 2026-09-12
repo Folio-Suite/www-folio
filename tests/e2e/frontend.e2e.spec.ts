@@ -1,17 +1,9 @@
-import { test, expect, Page } from '@playwright/test'
+import { test, expect } from '@playwright/test'
 
-test.describe('Frontend', () => {
-  let page: Page
-
-  test.beforeAll(async ({ browser }, testInfo) => {
-    const context = await browser.newContext()
-    page = await context.newPage()
-  })
-
-  test('can load homepage', async ({ page }) => {
-    await page.goto('http://localhost:3000')
-    await expect(page).toHaveTitle(/Payload Website Template/)
-    const heading = page.locator('h1').first()
-    await expect(heading).toHaveText('Payload Website Template')
-  })
+test('the clean Folio home has its own identity and a useful empty state', async ({ page }) => {
+  await page.goto('http://localhost:3000')
+  await expect(page).toHaveTitle('Folio Suite')
+  await expect(page.getByRole('heading', { name: 'Folio Suite', exact: true })).toBeVisible()
+  await expect(page.getByText('A new website is taking shape.')).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Visit the blog' })).toHaveAttribute('href', '/blog')
 })
