@@ -54,6 +54,14 @@ const nextConfig: NextConfig = {
       './src/documentation/assets/*',
     ],
   },
+  outputFileTracingExcludes: {
+    '/UndoKit/\\[\\[...path\\]\\]': [
+      './documentation/undokit/versions/*/original/**/*',
+      './documentation/undokit/versions/*/release-manifest.json',
+      './documentation/undokit/versions/*/manifest.json',
+      './documentation/undokit/latest/manifest.json',
+    ],
+  },
   redirects,
   turbopack: {
     root: path.resolve(dirname),
