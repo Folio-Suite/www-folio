@@ -1,0 +1,563 @@
+{
+  "schemaVersion": 1,
+  "preparedAtUTC": "2026-10-18T01:03:17Z",
+  "candidateID": "0f418528a0ef5f8da9b7855ab4f5867f88bccc86177864f9f0fa7e4d6ce9c8c9",
+  "releaseVersion": "0.2.0",
+  "frameworkBuildNumber": "2",
+  "sourceCommit": "8d3ab774379413e9f330ce198aa27cb91eb4b74b",
+  "plannedSourceTag": "0.2.0",
+  "sourceTagCreated": false,
+  "toolchain": {
+    "xcodebuildVersion": [
+      "Xcode 27.1",
+      "Build version 27A9275"
+    ],
+    "swiftVersion": [
+      "swift-driver version: 1.168.6 Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)",
+      "Target: arm64-apple-macosx27.0.0"
+    ]
+  },
+  "configuration": "Release",
+  "procedure": {
+    "command": "scripts/release/candidate.rb prepare",
+    "arguments": {
+      "source": "/Users/ctwelve/Developer/UndoKit",
+      "commit": "8d3ab774379413e9f330ce198aa27cb91eb4b74b",
+      "version": "0.2.0",
+      "build_number": "2",
+      "assembly": "/Users/ctwelve/Library/Developer/Xcode/DerivedData/UndoKit/XCFramework/Candidates/0.2.0-2-8d3ab7743794-20261017-merged-beta01",
+      "docs": "/Users/ctwelve/Library/Developer/Xcode/DerivedData/UndoKit/ReleasePreparation/2026-10-17-8d3ab77/documentation",
+      "publisher_approval": "/tmp/undokit-release-20261017/publisher-approval.json",
+      "published_inventory": "/tmp/undokit-release-20261017/published-inventory-8d3ab77.json",
+      "output": "/Users/ctwelve/Developer/UndoKit-ReleaseCandidates/0.2.0-build2-8d3ab77-20261017-rc1"
+    },
+    "signingCommand": [
+      "codesign",
+      "--sign",
+      "42B17F0D8B4B374D0CA6FF52E3C5B39609F72D67",
+      "--timestamp",
+      "/Users/ctwelve/Developer/UndoKit-ReleaseCandidates/0.2.0-build2-8d3ab77-20261017-rc1/UndoKit.xcframework"
+    ],
+    "zipCommand": [
+      "ditto",
+      "-c",
+      "-k",
+      "--keepParent",
+      "/Users/ctwelve/Developer/UndoKit-ReleaseCandidates/0.2.0-build2-8d3ab77-20261017-rc1/UndoKit.xcframework",
+      "/Users/ctwelve/Developer/UndoKit-ReleaseCandidates/0.2.0-build2-8d3ab77-20261017-rc1/UndoKit-0.2.0-build2.xcframework.zip"
+    ]
+  },
+  "assemblyProvenance": {
+    "schemaVersion": 1,
+    "createdAtUTC": "2026-10-18T01:00:30Z",
+    "candidateID": "0.2.0-2-8d3ab7743794-20261017-merged-beta01",
+    "releaseVersion": "0.2.0",
+    "frameworkBuildNumber": "2",
+    "sourceCommit": "8d3ab774379413e9f330ce198aa27cb91eb4b74b",
+    "sourceTree": "2847c14c25c253ab332a371099cc69870a829df1",
+    "sourceTagPresent": false,
+    "workingTreeDirtyPaths": [
+
+    ],
+    "toolchain": {
+      "xcodebuildVersion": [
+        "Xcode 27.1",
+        "Build version 27A9275"
+      ],
+      "swiftVersion": [
+        "swift-driver version: 1.168.6 Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)",
+        "Target: arm64-apple-macosx27.0.0"
+      ]
+    },
+    "configuration": "Release",
+    "procedure": {
+      "script": "scripts/assemble-xcframework.rb",
+      "arguments": [
+        "--version",
+        "0.2.0",
+        "--build-number",
+        "2",
+        "--run-id",
+        "20261017-merged-beta01"
+      ],
+      "buildIntermediates": "/Users/ctwelve/Library/Developer/Xcode/DerivedData/UndoKit/XCFramework/Build",
+      "codeSigning": "disabled",
+      "platforms": [
+        {
+          "name": "macos",
+          "destination": "generic/platform=macOS",
+          "sdk": "macosx",
+          "architectures": [
+            "arm64",
+            "x86_64"
+          ],
+          "minimum_os": "14.0"
+        },
+        {
+          "name": "ios-device",
+          "destination": "generic/platform=iOS",
+          "sdk": "iphoneos",
+          "architectures": [
+            "arm64"
+          ],
+          "minimum_os": "17.0"
+        },
+        {
+          "name": "ios-simulator",
+          "destination": "generic/platform=iOS Simulator",
+          "sdk": "iphonesimulator",
+          "architectures": [
+            "arm64",
+            "x86_64"
+          ],
+          "minimum_os": "17.0"
+        }
+      ]
+    },
+    "archives": {
+      "macos": {
+        "archivePath": "/Users/ctwelve/Library/Developer/Xcode/DerivedData/UndoKit/XCFramework/Candidates/0.2.0-2-8d3ab7743794-20261017-merged-beta01/archives/UndoKit-macos.xcarchive",
+        "archiveTreeSHA256": "bd198de336e9269260d230a1bf05f913c55214018b797dd24e7ce46e412d380e",
+        "frameworkPath": "/Users/ctwelve/Library/Developer/Xcode/DerivedData/UndoKit/XCFramework/Candidates/0.2.0-2-8d3ab7743794-20261017-merged-beta01/archives/UndoKit-macos.xcarchive/Products/Library/Frameworks/UndoKit.framework",
+        "originalDSYMPath": "/Users/ctwelve/Library/Developer/Xcode/DerivedData/UndoKit/XCFramework/Candidates/0.2.0-2-8d3ab7743794-20261017-merged-beta01/archives/UndoKit-macos.xcarchive/dSYMs/UndoKit.framework.dSYM",
+        "logPath": "/Users/ctwelve/Library/Developer/Xcode/DerivedData/UndoKit/XCFramework/Candidates/0.2.0-2-8d3ab7743794-20261017-merged-beta01/logs/archive-macos.log",
+        "command": [
+          "xcodebuild",
+          "-project",
+          "/Users/ctwelve/Developer/UndoKit/UndoKit.xcodeproj",
+          "-scheme",
+          "UndoKit",
+          "-configuration",
+          "Release",
+          "-destination",
+          "generic/platform=macOS",
+          "-derivedDataPath",
+          "/Users/ctwelve/Library/Developer/Xcode/DerivedData/UndoKit/XCFramework/Build",
+          "-clonedSourcePackagesDirPath",
+          "/Users/ctwelve/Library/Developer/Xcode/DerivedData/UndoKit/XCFramework/Build/SourcePackages",
+          "-onlyUsePackageVersionsFromResolvedFile",
+          "-archivePath",
+          "/Users/ctwelve/Library/Developer/Xcode/DerivedData/UndoKit/XCFramework/Candidates/0.2.0-2-8d3ab7743794-20261017-merged-beta01/archives/UndoKit-macos.xcarchive",
+          "ARCHS=arm64 x86_64",
+          "ONLY_ACTIVE_ARCH=NO",
+          "SKIP_INSTALL=NO",
+          "BUILD_LIBRARY_FOR_DISTRIBUTION=YES",
+          "DEBUG_INFORMATION_FORMAT=dwarf-with-dsym",
+          "CODE_SIGNING_ALLOWED=NO",
+          "CODE_SIGNING_REQUIRED=NO",
+          "CODE_SIGN_IDENTITY=",
+          "MARKETING_VERSION=0.2.0",
+          "CURRENT_PROJECT_VERSION=2",
+          "MACOSX_DEPLOYMENT_TARGET=14.0",
+          "IPHONEOS_DEPLOYMENT_TARGET=17.0",
+          "SWIFT_VERSION=6.0",
+          "SWIFT_STRICT_CONCURRENCY=complete",
+          "archive"
+        ],
+        "buildSettings": {
+          "ARCHS": "arm64 x86_64",
+          "ONLY_ACTIVE_ARCH": "NO",
+          "SKIP_INSTALL": "NO",
+          "BUILD_LIBRARY_FOR_DISTRIBUTION": "YES",
+          "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym",
+          "CODE_SIGNING_ALLOWED": "NO",
+          "CODE_SIGNING_REQUIRED": "NO",
+          "CODE_SIGN_IDENTITY": "",
+          "MARKETING_VERSION": "0.2.0",
+          "CURRENT_PROJECT_VERSION": "2",
+          "MACOSX_DEPLOYMENT_TARGET": "14.0",
+          "IPHONEOS_DEPLOYMENT_TARGET": "17.0",
+          "SWIFT_VERSION": "6.0",
+          "SWIFT_STRICT_CONCURRENCY": "complete"
+        }
+      },
+      "ios-device": {
+        "archivePath": "/Users/ctwelve/Library/Developer/Xcode/DerivedData/UndoKit/XCFramework/Candidates/0.2.0-2-8d3ab7743794-20261017-merged-beta01/archives/UndoKit-ios-device.xcarchive",
+        "archiveTreeSHA256": "0b9dd5f4d85e0a68d80b2c21cdcd1cc391ea63831c32e4b219cb6eebb8ab9299",
+        "frameworkPath": "/Users/ctwelve/Library/Developer/Xcode/DerivedData/UndoKit/XCFramework/Candidates/0.2.0-2-8d3ab7743794-20261017-merged-beta01/archives/UndoKit-ios-device.xcarchive/Products/Library/Frameworks/UndoKit.framework",
+        "originalDSYMPath": "/Users/ctwelve/Library/Developer/Xcode/DerivedData/UndoKit/XCFramework/Candidates/0.2.0-2-8d3ab7743794-20261017-merged-beta01/archives/UndoKit-ios-device.xcarchive/dSYMs/UndoKit.framework.dSYM",
+        "logPath": "/Users/ctwelve/Library/Developer/Xcode/DerivedData/UndoKit/XCFramework/Candidates/0.2.0-2-8d3ab7743794-20261017-merged-beta01/logs/archive-ios-device.log",
+        "command": [
+          "xcodebuild",
+          "-project",
+          "/Users/ctwelve/Developer/UndoKit/UndoKit.xcodeproj",
+          "-scheme",
+          "UndoKit",
+          "-configuration",
+          "Release",
+          "-destination",
+          "generic/platform=iOS",
+          "-derivedDataPath",
+          "/Users/ctwelve/Library/Developer/Xcode/DerivedData/UndoKit/XCFramework/Build",
+          "-clonedSourcePackagesDirPath",
+          "/Users/ctwelve/Library/Developer/Xcode/DerivedData/UndoKit/XCFramework/Build/SourcePackages",
+          "-onlyUsePackageVersionsFromResolvedFile",
+          "-archivePath",
+          "/Users/ctwelve/Library/Developer/Xcode/DerivedData/UndoKit/XCFramework/Candidates/0.2.0-2-8d3ab7743794-20261017-merged-beta01/archives/UndoKit-ios-device.xcarchive",
+          "ARCHS=arm64",
+          "ONLY_ACTIVE_ARCH=NO",
+          "SKIP_INSTALL=NO",
+          "BUILD_LIBRARY_FOR_DISTRIBUTION=YES",
+          "DEBUG_INFORMATION_FORMAT=dwarf-with-dsym",
+          "CODE_SIGNING_ALLOWED=NO",
+          "CODE_SIGNING_REQUIRED=NO",
+          "CODE_SIGN_IDENTITY=",
+          "MARKETING_VERSION=0.2.0",
+          "CURRENT_PROJECT_VERSION=2",
+          "MACOSX_DEPLOYMENT_TARGET=14.0",
+          "IPHONEOS_DEPLOYMENT_TARGET=17.0",
+          "SWIFT_VERSION=6.0",
+          "SWIFT_STRICT_CONCURRENCY=complete",
+          "archive"
+        ],
+        "buildSettings": {
+          "ARCHS": "arm64",
+          "ONLY_ACTIVE_ARCH": "NO",
+          "SKIP_INSTALL": "NO",
+          "BUILD_LIBRARY_FOR_DISTRIBUTION": "YES",
+          "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym",
+          "CODE_SIGNING_ALLOWED": "NO",
+          "CODE_SIGNING_REQUIRED": "NO",
+          "CODE_SIGN_IDENTITY": "",
+          "MARKETING_VERSION": "0.2.0",
+          "CURRENT_PROJECT_VERSION": "2",
+          "MACOSX_DEPLOYMENT_TARGET": "14.0",
+          "IPHONEOS_DEPLOYMENT_TARGET": "17.0",
+          "SWIFT_VERSION": "6.0",
+          "SWIFT_STRICT_CONCURRENCY": "complete"
+        }
+      },
+      "ios-simulator": {
+        "archivePath": "/Users/ctwelve/Library/Developer/Xcode/DerivedData/UndoKit/XCFramework/Candidates/0.2.0-2-8d3ab7743794-20261017-merged-beta01/archives/UndoKit-ios-simulator.xcarchive",
+        "archiveTreeSHA256": "c4c1403f165a7bce10645e45982aef8658b04075ba1352d92e8ad3b146535c56",
+        "frameworkPath": "/Users/ctwelve/Library/Developer/Xcode/DerivedData/UndoKit/XCFramework/Candidates/0.2.0-2-8d3ab7743794-20261017-merged-beta01/archives/UndoKit-ios-simulator.xcarchive/Products/Library/Frameworks/UndoKit.framework",
+        "originalDSYMPath": "/Users/ctwelve/Library/Developer/Xcode/DerivedData/UndoKit/XCFramework/Candidates/0.2.0-2-8d3ab7743794-20261017-merged-beta01/archives/UndoKit-ios-simulator.xcarchive/dSYMs/UndoKit.framework.dSYM",
+        "logPath": "/Users/ctwelve/Library/Developer/Xcode/DerivedData/UndoKit/XCFramework/Candidates/0.2.0-2-8d3ab7743794-20261017-merged-beta01/logs/archive-ios-simulator.log",
+        "command": [
+          "xcodebuild",
+          "-project",
+          "/Users/ctwelve/Developer/UndoKit/UndoKit.xcodeproj",
+          "-scheme",
+          "UndoKit",
+          "-configuration",
+          "Release",
+          "-destination",
+          "generic/platform=iOS Simulator",
+          "-derivedDataPath",
+          "/Users/ctwelve/Library/Developer/Xcode/DerivedData/UndoKit/XCFramework/Build",
+          "-clonedSourcePackagesDirPath",
+          "/Users/ctwelve/Library/Developer/Xcode/DerivedData/UndoKit/XCFramework/Build/SourcePackages",
+          "-onlyUsePackageVersionsFromResolvedFile",
+          "-archivePath",
+          "/Users/ctwelve/Library/Developer/Xcode/DerivedData/UndoKit/XCFramework/Candidates/0.2.0-2-8d3ab7743794-20261017-merged-beta01/archives/UndoKit-ios-simulator.xcarchive",
+          "ARCHS=arm64 x86_64",
+          "ONLY_ACTIVE_ARCH=NO",
+          "SKIP_INSTALL=NO",
+          "BUILD_LIBRARY_FOR_DISTRIBUTION=YES",
+          "DEBUG_INFORMATION_FORMAT=dwarf-with-dsym",
+          "CODE_SIGNING_ALLOWED=NO",
+          "CODE_SIGNING_REQUIRED=NO",
+          "CODE_SIGN_IDENTITY=",
+          "MARKETING_VERSION=0.2.0",
+          "CURRENT_PROJECT_VERSION=2",
+          "MACOSX_DEPLOYMENT_TARGET=14.0",
+          "IPHONEOS_DEPLOYMENT_TARGET=17.0",
+          "SWIFT_VERSION=6.0",
+          "SWIFT_STRICT_CONCURRENCY=complete",
+          "archive"
+        ],
+        "buildSettings": {
+          "ARCHS": "arm64 x86_64",
+          "ONLY_ACTIVE_ARCH": "NO",
+          "SKIP_INSTALL": "NO",
+          "BUILD_LIBRARY_FOR_DISTRIBUTION": "YES",
+          "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym",
+          "CODE_SIGNING_ALLOWED": "NO",
+          "CODE_SIGNING_REQUIRED": "NO",
+          "CODE_SIGN_IDENTITY": "",
+          "MARKETING_VERSION": "0.2.0",
+          "CURRENT_PROJECT_VERSION": "2",
+          "MACOSX_DEPLOYMENT_TARGET": "14.0",
+          "IPHONEOS_DEPLOYMENT_TARGET": "17.0",
+          "SWIFT_VERSION": "6.0",
+          "SWIFT_STRICT_CONCURRENCY": "complete"
+        }
+      }
+    },
+    "xcframeworkPath": "/Users/ctwelve/Library/Developer/Xcode/DerivedData/UndoKit/XCFramework/Candidates/0.2.0-2-8d3ab7743794-20261017-merged-beta01/UndoKit.xcframework",
+    "xcframeworkTreeSHA256": "bf931a33c2cfc7d1f56248741ec477f69cd265b2a8244dc8df8bd1bb454a3fe4",
+    "variants": {
+      "macos": {
+        "libraryIdentifier": "macos-arm64_x86_64",
+        "frameworkPath": "macos-arm64_x86_64/UndoKit.framework",
+        "debugSymbolsPath": "macos-arm64_x86_64/dSYMs",
+        "debugSymbolBundlePath": "macos-arm64_x86_64/dSYMs/UndoKit.framework.dSYM",
+        "architectures": [
+          "arm64",
+          "x86_64"
+        ],
+        "debugSymbolsArchitectures": [
+          "arm64",
+          "x86_64"
+        ],
+        "debugSymbolUUIDs": {
+          "x86_64": "87800879-FD31-3F18-A4A2-6BAAC8C2A6DA",
+          "arm64": "C584A411-4EA4-36AD-B599-13A46B172D22"
+        },
+        "platformBuildMetadata": {
+          "arm64": {
+            "platform": "MACOS",
+            "minimumOS": "14.0"
+          },
+          "x86_64": {
+            "platform": "MACOS",
+            "minimumOS": "14.0"
+          }
+        },
+        "resourceLayout": "Resources",
+        "swiftInterfaceSHA256": {
+          "arm64-apple-macos.swiftinterface": "6975950cdb388299850cbde7b286b3292881d5825c0b7398c769614789eab22f",
+          "x86_64-apple-macos.swiftinterface": "7959aab52951f737b22b5ba6f7fbbe0caa9eeb556981c7ab8108b5cc5b10b9c7"
+        },
+        "frameworkBinarySHA256": "16b7d608f82aa5967e4c16033fec00e6a681045bc93fc81ebe1d6a7402acebb4",
+        "compiledModelTreeSHA256": "89be4a4fcad079e71a86f92f5397f4ecc6fe36928c86db6f31971f4a73c6cd73",
+        "privacyManifestSHA256": "99913d6b63a25739362d856731931efc3a72db0cca235a78a34120cb0c409998"
+      },
+      "ios-device": {
+        "libraryIdentifier": "ios-arm64",
+        "frameworkPath": "ios-arm64/UndoKit.framework",
+        "debugSymbolsPath": "ios-arm64/dSYMs",
+        "debugSymbolBundlePath": "ios-arm64/dSYMs/UndoKit.framework.dSYM",
+        "architectures": [
+          "arm64"
+        ],
+        "debugSymbolsArchitectures": [
+          "arm64"
+        ],
+        "debugSymbolUUIDs": {
+          "arm64": "897460DD-C8A3-3228-B987-27D825955223"
+        },
+        "platformBuildMetadata": {
+          "arm64": {
+            "platform": "IOS",
+            "minimumOS": "17.0"
+          }
+        },
+        "resourceLayout": "framework-root",
+        "swiftInterfaceSHA256": {
+          "arm64-apple-ios.swiftinterface": "67dace6bca7f208eedaf04ea348863bd3e6e6784b8c6815904c08d41a9d82972"
+        },
+        "frameworkBinarySHA256": "94ba07b590dc304458ba0a44810472e977fef0ff53b2e0ed0acfb5d7d6d7d23c",
+        "compiledModelTreeSHA256": "89be4a4fcad079e71a86f92f5397f4ecc6fe36928c86db6f31971f4a73c6cd73",
+        "privacyManifestSHA256": "99913d6b63a25739362d856731931efc3a72db0cca235a78a34120cb0c409998"
+      },
+      "ios-simulator": {
+        "libraryIdentifier": "ios-arm64_x86_64-simulator",
+        "frameworkPath": "ios-arm64_x86_64-simulator/UndoKit.framework",
+        "debugSymbolsPath": "ios-arm64_x86_64-simulator/dSYMs",
+        "debugSymbolBundlePath": "ios-arm64_x86_64-simulator/dSYMs/UndoKit.framework.dSYM",
+        "architectures": [
+          "arm64",
+          "x86_64"
+        ],
+        "debugSymbolsArchitectures": [
+          "arm64",
+          "x86_64"
+        ],
+        "debugSymbolUUIDs": {
+          "x86_64": "B77646E2-C31E-393F-A8FD-3AAEC3F4D568",
+          "arm64": "011E3DE4-8C5B-3065-A25E-E3A4C18B72AA"
+        },
+        "platformBuildMetadata": {
+          "arm64": {
+            "platform": "IOSSIMULATOR",
+            "minimumOS": "17.0"
+          },
+          "x86_64": {
+            "platform": "IOSSIMULATOR",
+            "minimumOS": "17.0"
+          }
+        },
+        "resourceLayout": "framework-root",
+        "swiftInterfaceSHA256": {
+          "arm64-apple-ios-simulator.swiftinterface": "f50aed40d480d7a85d4f4781de9f003873296fb64897a7b7cff4f2e0d1020d2e",
+          "x86_64-apple-ios-simulator.swiftinterface": "15257ad23b8641942690c970d7ffcde2893aa32fdf93a41e434758742bb99afa"
+        },
+        "frameworkBinarySHA256": "dd36ea04845f65f319dbf1bb1a8b5cc094ea4811af8dcfae902c51fcd653716f",
+        "compiledModelTreeSHA256": "89be4a4fcad079e71a86f92f5397f4ecc6fe36928c86db6f31971f4a73c6cd73",
+        "privacyManifestSHA256": "99913d6b63a25739362d856731931efc3a72db0cca235a78a34120cb0c409998"
+      }
+    }
+  },
+  "variants": {
+    "macos": {
+      "libraryIdentifier": "macos-arm64_x86_64",
+      "frameworkPath": "macos-arm64_x86_64/UndoKit.framework",
+      "debugSymbolsPath": "macos-arm64_x86_64/dSYMs",
+      "debugSymbolBundlePath": "macos-arm64_x86_64/dSYMs/UndoKit.framework.dSYM",
+      "architectures": [
+        "arm64",
+        "x86_64"
+      ],
+      "debugSymbolsArchitectures": [
+        "arm64",
+        "x86_64"
+      ],
+      "debugSymbolUUIDs": {
+        "x86_64": "87800879-FD31-3F18-A4A2-6BAAC8C2A6DA",
+        "arm64": "C584A411-4EA4-36AD-B599-13A46B172D22"
+      },
+      "platformBuildMetadata": {
+        "arm64": {
+          "platform": "MACOS",
+          "minimumOS": "14.0"
+        },
+        "x86_64": {
+          "platform": "MACOS",
+          "minimumOS": "14.0"
+        }
+      },
+      "resourceLayout": "Resources",
+      "swiftInterfaceSHA256": {
+        "arm64-apple-macos.swiftinterface": "6975950cdb388299850cbde7b286b3292881d5825c0b7398c769614789eab22f",
+        "x86_64-apple-macos.swiftinterface": "7959aab52951f737b22b5ba6f7fbbe0caa9eeb556981c7ab8108b5cc5b10b9c7"
+      },
+      "frameworkBinarySHA256": "16b7d608f82aa5967e4c16033fec00e6a681045bc93fc81ebe1d6a7402acebb4",
+      "compiledModelTreeSHA256": "89be4a4fcad079e71a86f92f5397f4ecc6fe36928c86db6f31971f4a73c6cd73",
+      "privacyManifestSHA256": "99913d6b63a25739362d856731931efc3a72db0cca235a78a34120cb0c409998"
+    },
+    "ios-device": {
+      "libraryIdentifier": "ios-arm64",
+      "frameworkPath": "ios-arm64/UndoKit.framework",
+      "debugSymbolsPath": "ios-arm64/dSYMs",
+      "debugSymbolBundlePath": "ios-arm64/dSYMs/UndoKit.framework.dSYM",
+      "architectures": [
+        "arm64"
+      ],
+      "debugSymbolsArchitectures": [
+        "arm64"
+      ],
+      "debugSymbolUUIDs": {
+        "arm64": "897460DD-C8A3-3228-B987-27D825955223"
+      },
+      "platformBuildMetadata": {
+        "arm64": {
+          "platform": "IOS",
+          "minimumOS": "17.0"
+        }
+      },
+      "resourceLayout": "framework-root",
+      "swiftInterfaceSHA256": {
+        "arm64-apple-ios.swiftinterface": "67dace6bca7f208eedaf04ea348863bd3e6e6784b8c6815904c08d41a9d82972"
+      },
+      "frameworkBinarySHA256": "94ba07b590dc304458ba0a44810472e977fef0ff53b2e0ed0acfb5d7d6d7d23c",
+      "compiledModelTreeSHA256": "89be4a4fcad079e71a86f92f5397f4ecc6fe36928c86db6f31971f4a73c6cd73",
+      "privacyManifestSHA256": "99913d6b63a25739362d856731931efc3a72db0cca235a78a34120cb0c409998"
+    },
+    "ios-simulator": {
+      "libraryIdentifier": "ios-arm64_x86_64-simulator",
+      "frameworkPath": "ios-arm64_x86_64-simulator/UndoKit.framework",
+      "debugSymbolsPath": "ios-arm64_x86_64-simulator/dSYMs",
+      "debugSymbolBundlePath": "ios-arm64_x86_64-simulator/dSYMs/UndoKit.framework.dSYM",
+      "architectures": [
+        "arm64",
+        "x86_64"
+      ],
+      "debugSymbolsArchitectures": [
+        "arm64",
+        "x86_64"
+      ],
+      "debugSymbolUUIDs": {
+        "x86_64": "B77646E2-C31E-393F-A8FD-3AAEC3F4D568",
+        "arm64": "011E3DE4-8C5B-3065-A25E-E3A4C18B72AA"
+      },
+      "platformBuildMetadata": {
+        "arm64": {
+          "platform": "IOSSIMULATOR",
+          "minimumOS": "17.0"
+        },
+        "x86_64": {
+          "platform": "IOSSIMULATOR",
+          "minimumOS": "17.0"
+        }
+      },
+      "resourceLayout": "framework-root",
+      "swiftInterfaceSHA256": {
+        "arm64-apple-ios-simulator.swiftinterface": "f50aed40d480d7a85d4f4781de9f003873296fb64897a7b7cff4f2e0d1020d2e",
+        "x86_64-apple-ios-simulator.swiftinterface": "15257ad23b8641942690c970d7ffcde2893aa32fdf93a41e434758742bb99afa"
+      },
+      "frameworkBinarySHA256": "dd36ea04845f65f319dbf1bb1a8b5cc094ea4811af8dcfae902c51fcd653716f",
+      "compiledModelTreeSHA256": "89be4a4fcad079e71a86f92f5397f4ecc6fe36928c86db6f31971f4a73c6cd73",
+      "privacyManifestSHA256": "99913d6b63a25739362d856731931efc3a72db0cca235a78a34120cb0c409998"
+    }
+  },
+  "signing": {
+    "certificateSHA256": "b2cb2851074eb70fbdf5f64410606c83341d088f7874934f565f429eb0cef6b8",
+    "certificateSHA1": "42B17F0D8B4B374D0CA6FF52E3C5B39609F72D67",
+    "publisher": "Apple Distribution: Justin Croonenberghs (FT9KDL728H)",
+    "teamIdentifier": "FT9KDL728H",
+    "secureTimestampEvidence": "Oct 17, 2026 at 8:03:16 PM",
+    "display": "Executable=/Users/ctwelve/Developer/UndoKit-ReleaseCandidates/0.2.0-build2-8d3ab77-20261017-rc1/UndoKit.xcframework/Info.plist\nIdentifier=UndoKit\nFormat=bundle\nCodeDirectory v=20200 size=199 flags=0x0(none) hashes=1+3 location=embedded\nHash type=sha256 size=32\nCandidateCDHash sha256=be7a15c9e5662555d93ff9b18e0877b9aedc2df0\nCandidateCDHashFull sha256=be7a15c9e5662555d93ff9b18e0877b9aedc2df0516aa3d9466f87d898e8d646\nHash choices=sha256\nCMSDigest=be7a15c9e5662555d93ff9b18e0877b9aedc2df0516aa3d9466f87d898e8d646\nCMSDigestType=2\nPage size=none\nCDHash=be7a15c9e5662555d93ff9b18e0877b9aedc2df0\nSignature size=9106\nAuthority=Apple Distribution: Justin Croonenberghs (FT9KDL728H)\nAuthority=Apple Worldwide Developer Relations Certification Authority\nAuthority=Apple Root CA\nTimestamp=Oct 17, 2026 at 8:03:16 PM\nInfo.plist entries=3\nTeamIdentifier=FT9KDL728H\nSealed Resources version=2 rules=10 files=59\nInternal requirements count=1 size=180\nTotal signatures=1\nChosen signature=1\n",
+    "verification": "/Users/ctwelve/Developer/UndoKit-ReleaseCandidates/0.2.0-build2-8d3ab77-20261017-rc1/UndoKit.xcframework: valid on disk\n/Users/ctwelve/Developer/UndoKit-ReleaseCandidates/0.2.0-build2-8d3ab77-20261017-rc1/UndoKit.xcframework: satisfies its Designated Requirement\n/Users/ctwelve/Developer/UndoKit-ReleaseCandidates/0.2.0-build2-8d3ab77-20261017-rc1/UndoKit.xcframework: explicit requirement satisfied\n",
+    "verificationRequirement": "anchor apple generic and certificate leaf = H\"42B17F0D8B4B374D0CA6FF52E3C5B39609F72D67\" and certificate leaf[subject.OU] = \"FT9KDL728H\""
+  },
+  "documentation": {
+    "schemaVersion": 1,
+    "version": "0.2.0",
+    "channel": "release",
+    "sourceCommit": "8d3ab774379413e9f330ce198aa27cb91eb4b74b",
+    "sourceDirty": false,
+    "basePath": "/UndoKit/versions/0.2.0/",
+    "toolchain": {
+      "xcode": "Xcode 27.1\nBuild version 27A9275",
+      "swift": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)\nTarget: arm64-apple-macosx27.0.0",
+      "clang": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin27.0.0\nThread model: posix\nInstalledDir: /Applications/Xcode_27.1_Release_Candidate.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin"
+    },
+    "archivePath": "archive",
+    "archiveTreeSHA256": "8d752e98faf8ad576454da9ea66de6ec7dac0bbfda1aeaee2458f167bce7d067",
+    "sitePath": "site",
+    "producerPath": "producer.json",
+    "producerCommand": [
+      "xcodebuild",
+      "-project",
+      "UndoKit.xcodeproj",
+      "-scheme",
+      "UndoKit",
+      "-destination",
+      "generic/platform=macOS",
+      "-derivedDataPath",
+      "<derived-data>",
+      "docbuild",
+      "-skipPackagePluginValidation",
+      "CODE_SIGNING_ALLOWED=NO",
+      "CODE_SIGNING_REQUIRED=NO",
+      "CODE_SIGN_IDENTITY="
+    ],
+    "producerSHA256": "0c0c4e7c7205b298834fcd11abf39dd24a2797754c41be916249f413e63439c6",
+    "siteTreeSHA256": "70ffcafe8ae4b4dd8c77461b169a2fb7d0db423a2cbec74e5fd93fc108af4458"
+  },
+  "publishedInventory": {
+    "schemaVersion": 1,
+    "repository": "Folio-Suite/UndoKit",
+    "observedAtUTC": "2026-10-18T01:00:41.468763+00:00",
+    "evidence": "Fresh GitHub releases, tags, annotated tag and empty release assets retained as published-releases-8d3ab77.json, published-tags-8d3ab77.json, tag-ref-8d3ab77.json, tag-annotation-8d3ab77.json and release-detail-8d3ab77.json; tagged Project.xcconfig reserves build 1.",
+    "published": [
+      {
+        "version": "0.1.0",
+        "frameworkBuildNumber": "1",
+        "sourceCommit": "9e5cf63b7ba89247de8cedd9308329e74c13f82a",
+        "archiveSHA256": null,
+        "installationRoute": "source-only",
+        "tag": "0.1.0",
+        "evidence": "https://github.com/Folio-Suite/UndoKit/releases/tag/0.1.0"
+      }
+    ]
+  },
+  "inputsTreeSHA256": "c2361498f848a18c3102c761e7bc2f55ba64628f42e51372b7327eccc6811b7d",
+  "xcframeworkPath": "UndoKit.xcframework",
+  "signedXCFrameworkTreeSHA256": "6943a82dfda0717f654a1e0f76eedca3e1df0288de23c1057331264c3d9873ad",
+  "archivePath": "UndoKit-0.2.0-build2.xcframework.zip",
+  "archiveSHA256": "245f5df38fadf55b9113e767b68aa4edbae6c2f2c88b12725dfb01fbc119f211",
+  "qualificationStatus": "not-yet-qualified",
+  "qualificationEvidence": "Attach separate evidence/approval records binding candidateID, manifest SHA-256 and archive SHA-256. Do not mutate this manifest."
+}

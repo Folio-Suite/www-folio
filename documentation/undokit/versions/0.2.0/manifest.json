@@ -1,0 +1,61 @@
+{
+  "sourceRepository": "https://github.com/Folio-Suite/UndoKit",
+  "producerManifest": {
+    "schemaVersion": 1,
+    "version": "0.2.0",
+    "channel": "release",
+    "sourceCommit": "8d3ab774379413e9f330ce198aa27cb91eb4b74b",
+    "sourceDirty": false,
+    "basePath": "/UndoKit/versions/0.2.0/",
+    "toolchain": {
+      "xcode": "Xcode 27.1\nBuild version 27A9275",
+      "swift": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)\nTarget: arm64-apple-macosx27.0.0",
+      "clang": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin27.0.0\nThread model: posix\nInstalledDir: /Applications/Xcode_27.1_Release_Candidate.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin"
+    },
+    "archivePath": "archive",
+    "archiveTreeSHA256": "8d752e98faf8ad576454da9ea66de6ec7dac0bbfda1aeaee2458f167bce7d067",
+    "sitePath": "site",
+    "producerPath": "producer.json",
+    "producerCommand": [
+      "xcodebuild",
+      "-project",
+      "UndoKit.xcodeproj",
+      "-scheme",
+      "UndoKit",
+      "-destination",
+      "generic/platform=macOS",
+      "-derivedDataPath",
+      "<derived-data>",
+      "docbuild",
+      "-skipPackagePluginValidation",
+      "CODE_SIGNING_ALLOWED=NO",
+      "CODE_SIGNING_REQUIRED=NO",
+      "CODE_SIGN_IDENTITY="
+    ],
+    "producerSHA256": "0c0c4e7c7205b298834fcd11abf39dd24a2797754c41be916249f413e63439c6",
+    "siteTreeSHA256": "70ffcafe8ae4b4dd8c77461b169a2fb7d0db423a2cbec74e5fd93fc108af4458"
+  },
+  "releaseManifestSHA256": "a37248e6920cc1c61fbc1fba7fe155ad1eb7dccccde0134887715523d7a365c6",
+  "website": {
+    "revision": "a4c207c17694ba4425c8d2c46eb216e47335ced6",
+    "importerSHA256": "52415601ccbae8a214c93eea9cdeb7586a7cb7b3a67eff30f6fb313e19829a8a",
+    "docc": {
+      "path": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/docc",
+      "executableSHA256": "a570f408e327fa647603cb7c9cb1e301abd89d1303dffefc66a4e54b24b827e1",
+      "help": "OVERVIEW: Documentation Compiler: compile, analyze, and preview documentation.\n\nUSAGE: docc convert [<catalog-path>] [--additional-symbol-graph-dir <symbol-graph-dir>] [<other-options>]\n       docc preview [<catalog-path>] [--port <port-number>] [--additional-symbol-graph-dir <symbol-graph-dir>] [--output-dir <output-dir>] [<other-options>]\n\nOPTIONS:\n  -h, --help              Show help information.\n\nSUBCOMMANDS:\n  convert                 Convert documentation markup, assets, and symbol\n                          information into a documentation archive.\n  preview                 Convert documentation inputs and preview the\n                          documentation output.\n  process-archive         Perform operations on documentation archives\n                          ('.doccarchive' directories).\n  process-catalog         Perform operations on documentation catalogs ('.docc'\n                          directories).\n  init                    Generate a documentation catalog from the selected\n                          template.\n  merge                   Merge a list of documentation archives into a\n                          combined archive.\n\n  See 'docc help <subcommand>' for detailed help."
+    },
+    "command": [
+      "xcrun",
+      "docc",
+      "process-archive",
+      "transform-for-static-hosting",
+      "<archive>",
+      "--output-path",
+      "<site>",
+      "--hosting-base-path",
+      "/UndoKit/versions/0.2.0"
+    ],
+    "basePath": "/UndoKit/versions/0.2.0/",
+    "siteTreeSHA256": "b8e8d888a95d240be3a9ce9686b67d7dc3f7627040bbf530eccec97fddc90b69"
+  }
+}

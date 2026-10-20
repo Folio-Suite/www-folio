@@ -32,6 +32,8 @@ The tree checksum format matches UndoKit: sorted relative paths, directory entri
 
 Website customizations belong in the importer and `src/documentation/assets/` assets. Regenerate derivatives from original archives when changing generated HTML; hand edits invalidate recorded derivative checksums. Selector assets are shared website resources and receive normal Git review alongside the importer.
 
+To regenerate website derivatives, import each retained `versions/<version>/original` candidate with its adjacent `release-manifest.json` into a fresh `--output` directory. Import the intended Latest version last. Validate the complete replacement, compare the original artifact hashes, and replace the tracked publication tree as part of a reviewed website commit. This preserves the immutable framework inputs while permitting website-owned HTML changes. The production file trace includes the generated sites and registry, and excludes retained originals and provenance manifests from the server bundle.
+
 ## Cutover
 
 Keep UndoKit's existing hosted documentation available until the Development site's imported output has passed direct topic refresh, assets/search, version switching, keyboard, and mobile checks on its deployed hostname. Then update incoming documentation links and arrange redirects for the old public URLs. The initial implementation does not disable the old deployment or infer that local checks prove production cutover.
