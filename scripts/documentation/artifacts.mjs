@@ -192,7 +192,13 @@ export async function materialize(entry, cache, offline) {
 }
 
 export async function extractArchive(archive, temporary) {
-  const { stdout: paths } = await execute('tar', ['-tzf', archive], { maxBuffer: 16 * 1024 * 1024 })
+  // macOS tar adds optional PAX metadata that GNU tar does not understand.
+  // Ignore only that warning class; path/type checks and byte hashes remain mandatory.
+  const { stdout: tarVersion } = await execute('tar', ['--version'])
+  const options = tarVersion.includes('GNU tar') ? ['--warning=no-unknown-keyword'] : []
+  const { stdout: paths } = await execute('tar', [...options, '-tzf', archive], {
+    maxBuffer: 16 * 1024 * 1024,
+  })
   if (
     paths
       .split('\n')
@@ -200,7 +206,7 @@ export async function extractArchive(archive, temporary) {
       .some((name) => name.startsWith('/') || name.includes('\\') || name.split('/').includes('..'))
   )
     throw new Error('Unsafe archive path')
-  const { stdout: types } = await execute('tar', ['-tvzf', archive], {
+  const { stdout: types } = await execute('tar', [...options, '-tvzf', archive], {
     maxBuffer: 16 * 1024 * 1024,
   })
   if (
@@ -210,5 +216,5 @@ export async function extractArchive(archive, temporary) {
       .some((line) => !/^[-d]/.test(line))
   )
     throw new Error('Links and special entries are refused')
-  await execute('tar', ['-xzf', archive, '-C', temporary, '--no-same-owner'])
+  await execute('tar', [...options, '-xzf', archive, '-C', temporary, '--no-same-owner'])
 }
