@@ -151,9 +151,9 @@ it('imports a bound release and publishes latest with provenance and website nav
   expect(registry.versions[0].routes).toContain('documentation/undokit/')
   expect(
     readFileSync(join(f.output, 'latest/site/documentation/undokit/index.html'), 'utf8'),
-  ).toContain('/UndoKit/_folio/selector.js')
+  ).toContain('/_documentation/undokit/selector.js')
   expect(readFileSync(join(f.output, 'latest/site/index.html'), 'utf8')).toContain(
-    '/UndoKit/documentation/undokit/',
+    '/documentation/undokit/',
   )
   expect(
     JSON.parse(readFileSync(join(f.output, 'versions/1.2.3/manifest.json'), 'utf8')).website

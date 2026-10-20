@@ -24,7 +24,7 @@
       'That topic is unavailable in this version. Showing the documentation home.'
   }
   try {
-    const response = await fetch('/UndoKit/publication.json', { cache: 'no-store' })
+    const response = await fetch('/_documentation/undokit/publication.json', { cache: 'no-store' })
     if (!response.ok) throw new Error('Version list unavailable')
     const publication = await response.json()
     const versionPattern = /^\d+\.\d+\.\d+$/
@@ -54,10 +54,10 @@
       if (!target) return
       // Read location at activation time: DocC may have navigated without a page load.
       const currentMount =
-        location.pathname.match(/^\/UndoKit\/versions\/\d+\.\d+\.\d+\//)?.[0] || '/UndoKit/'
+        location.pathname.match(/^\/UndoKit\/versions\/\d+\.\d+\.\d+\//)?.[0] || '/'
       const topic = location.pathname.slice(currentMount.length).replace(/\/$/, '')
       const exists = target.routes.some((route) => route.replace(/\/$/, '') === topic)
-      const mount = select.value === 'latest' ? '/UndoKit/' : `/UndoKit/versions/${targetVersion}/`
+      const mount = select.value === 'latest' ? '/' : `/UndoKit/versions/${targetVersion}/`
       const url = new URL(
         mount + (exists ? `${topic}/` : 'documentation/undokit/'),
         location.origin,

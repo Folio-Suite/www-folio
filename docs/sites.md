@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 
 # Static development website
 
-The website targets `https://foliosuite.dev` and uses Astro's static output. Pages live in `src/pages/`; shared HTML and presentation live in `src/layouts/` and `src/styles/`. Ordinary pages ship HTML and CSS without a client framework. Static assets belong in Astro’s standard `public/` directory. `public/UndoKit/` is ignored generated output owned by the documentation preparer. Former local uploads, when present, are preserved in ignored `.legacy-local-media/`, outside the public tree.
+The website targets `https://foliosuite.dev` and uses Astro's static output. Pages live in `src/pages/`; shared HTML and presentation live in `src/layouts/` and `src/styles/`. Ordinary pages ship HTML and CSS without a client framework. Static assets belong in Astro’s standard `public/` directory. Ignored DocC resources are prepared from pinned release assets; see [the reserved public paths and pipeline](documentation.md). Former local uploads, when present, are preserved in ignored `.legacy-local-media/`, outside the public tree.
 
 The root reuses the visual identity and project links from `Folio-Suite/folio-suite.github.io`. Its UndoKit release label comes from the retained publication registry rather than a manually maintained version string. `/documentation/` lists available API references. `/404.html` provides the static-host error page.
 
@@ -29,7 +29,7 @@ Set `draft: false` when ready. Drafts and future-dated posts are omitted from th
 
 ## API documentation
 
-`pnpm dev` and `pnpm build` prepare `public/UndoKit/` before Astro runs. The preparer verifies every retained latest/version site hash and mount, copies only deployable sites plus shared navigation assets, and refuses invalid inputs before replacing existing output. See [API publication](documentation.md). Generated API pages remain ordinary files, so direct topic refreshes work on GitHub Pages without rewrites or a server.
+`pnpm dev` and `pnpm build` fetch and verify pinned release bundles into an ignored cache, then prepare the public tree before Astro runs. The preparer verifies original and website identities, exports only deployable sites and shared navigation, and preserves preceding output on failure. See [API publication](documentation.md). Generated API pages remain ordinary files, so direct topic refreshes work on GitHub Pages without rewrites or a server.
 
 ## GitHub Pages
 

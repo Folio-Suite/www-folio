@@ -11,7 +11,7 @@ Folio Suite brings together native software projects and reusable frameworks. Th
 
 ## Start with the documentation
 
-[UndoKit's API documentation](/UndoKit/) includes integration guides and symbol references. The version selector lets you move between the latest documented release and retained versions. Where a topic exists in both versions, the selector keeps you on that topic.
+[UndoKit's API documentation](/documentation/undokit/) includes integration guides and symbol references. The version selector lets you move between the latest documented release and retained versions. Where a topic exists in both versions, the selector keeps you on that topic.
 
 ## Explore the source
 

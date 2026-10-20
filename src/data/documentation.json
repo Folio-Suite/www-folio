@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "latest": "0.2.2",
+  "versions": [
+    {
+      "version": "0.2.2",
+      "basePath": "/UndoKit/versions/0.2.2/",
+      "sourceCommit": "9d04950fb314846e701890ac3095d28056820918",
+      "releaseManifestSHA256": "1f57df974b68aef7906900bd5667a04fa75246e7adcf67b15ce2fd83b85220e6",
+      "sourceAsset": {
+        "url": "https://github.com/Folio-Suite/UndoKit/releases/download/0.2.2/UndoKit-0.2.2-documentation.tar.gz",
+        "sha256": "86f8e95f2c1e8e2ddabe9214bc79d4ef6885d5934f06635c29310b305ab2845a"
+      },
+      "asset": {
+        "url": "https://github.com/Folio-Suite/www-folio/releases/download/undokit-docs-0.2.2-site-v1/UndoKit-0.2.2-website.tar.gz",
+        "sha256": "4fe0d0e7e21183a25fd744d198f31dd9bb71e1abaf79129b0f184bd21894764d"
+      }
+    }
+  ]
+}

@@ -5,3 +5,5 @@ dist/
 /documentation/
 pnpm-lock.yaml
 public/UndoKit/
+public/
+.cache/

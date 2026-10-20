@@ -11,7 +11,7 @@ SPDX-License-Identifier: MIT
 
 **Development note**: a Markdown blog entry with a title, description, publication date, and optional author. Drafts and future-dated notes are excluded from publication.
 
-**Documentation snapshot**: generated API documentation tied to an identified framework release. Framework repositories own generating source; this repository owns retained output and website presentation.
+**Documentation snapshot**: generated API documentation tied to an identified framework release. Framework repositories own generating source; this repository owns website presentation and its permanent derivative release assets. The source tree tracks a digest lockfile rather than generated documentation.
 
 **Latest documentation**: the snapshot explicitly promoted to the stable framework root, independent of numerical version sorting.
 

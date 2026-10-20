@@ -3,51 +3,60 @@ SPDX-FileCopyrightText: 2026 the Folio Project
 SPDX-License-Identifier: MIT
 -->
 
-# UndoKit documentation publication
+# API documentation pipeline
 
-UndoKit owns API comments, its DocC catalog, compilation, and release candidate archives. This repository owns imported originals, website derivatives, Latest promotion, and the version selector. The static Development website includes these derivatives without a runtime server.
+UndoKit owns API comments, its DocC catalog, compilation, and the original release archive. This repository owns website transformation, explicit Latest selection, navigation, and publication. Only 0.2.2 is included in the first serious website rollout; earlier experimental snapshots remain recoverable in Git history.
 
-## Manual import
+## Canonical artifacts and working directories
 
-Obtain the original clean documentation candidate and the published `UndoKit-<version>-manifest.json` from the trusted UndoKit release. The extracted candidate contains `archive/`, `site/`, `producer.json`, and `manifest.json` exactly as emitted by UndoKit staging. On a Mac with Xcode's DocC toolchain:
+The canonical inputs are permanent GitHub release assets, not a tracked generated tree:
+
+1. `Folio-Suite/UndoKit`, release `0.2.2`: `UndoKit-0.2.2-documentation.tar.gz` contains exactly `archive/`, `site/`, `producer.json`, and `manifest.json`. These are the original clean release candidate, bound to the published `UndoKit-0.2.2-manifest.json` and its full source revision.
+2. `Folio-Suite/www-folio`, release `undokit-docs-0.2.2-site-v1`: `UndoKit-0.2.2-website.tar.gz` retains that original candidate, the release manifest, and independently transformed Latest and numbered static exports with website provenance. The attached `lock-entry.json` describes the reviewed input/output identities. Website artifact releases do not replace framework release tags or the website’s Latest selection.
+3. `src/data/documentation.json` is the small tracked lockfile: exact asset URLs, SHA-256 digests, release-manifest digest, full source revision, versions, and explicit Latest. Never use a floating “latest release” download or an expiring Actions artifact as a website-build dependency.
+
+`.cache/documentation/` is ignored disposable build/package storage. Cached tarballs are content-addressed and checked on every use; extracted bundles are temporary and removed after export. `public/` contains ordinary authored assets plus ignored generated DocC resources. `dist/` is the deployable static website. The former tracked `documentation/undokit/` tree is retired; Git history preserves it.
+
+## Release handoff
+
+On UndoKit’s macOS/Xcode runner, stage documentation for the exact clean release source. After publishing the bound framework release manifest, run `Versioned documentation` with `operation=publish-asset`, the version, and the candidate Actions run ID. The producer verifies complete release binding and original hashes before attaching the permanent archive without clobbering another asset. Its packaging command is:
 
 ```sh
-pnpm docs:import --artifact /absolute/path/to/candidate \
-  --release-provenance /absolute/path/to/UndoKit-1.2.3-manifest.json
+ruby scripts/documentation/release-asset.rb \
+  --artifact /absolute/path/to/candidate \
+  --release-provenance /absolute/path/to/UndoKit-0.2.2-manifest.json \
+  --output /absolute/path/to/UndoKit-0.2.2-documentation.tar.gz
 ```
 
-The supplied published manifest is the trust anchor: do not synthesize it from the candidate. The importer verifies the complete release binding, original archive/export/producer checksums, clean source revision, toolchain binding, and producer command. It does not establish release authenticity through a network lookup.
+Then manually run this repository’s `Package documentation release` workflow with the version and independently reviewed SHA-256 values for the producer archive and published release manifest. Its Mac job downloads and verifies those pins, runs the website importer using Xcode DocC, packages the website bundle, and re-verifies the package. `publish=false` produces a reviewable Actions artifact; `publish=true` additionally publishes an immutable website-asset release through the `documentation-assets` environment. Configure an environment reviewer if desired. The ordinary Linux website build has no Xcode requirement.
 
-Each successful import explicitly promotes that version to Latest. Existing numbered originals are immutable; duplicate imports fail. Corrections to framework-authored release guidance require a separate reviewed correction workflow rather than replacing retained inputs.
+The corresponding local command is:
 
-## Retained and deployed files
+```sh
+node scripts/documentation/build-release.mjs --version 0.2.2 \
+  --source-sha256 <reviewed-producer-archive-sha256> \
+  --release-sha256 <reviewed-release-manifest-sha256> \
+  --output .cache/documentation/release
+```
 
-`documentation/undokit/versions/<version>/` retains `original/`, `release-manifest.json`, a website `manifest.json`, and the rebased `site/`. Latest has its own site and manifest. The importer transforms the original archive separately for `/UndoKit/` and `/UndoKit/versions/<version>/`, then injects navigation links. Website manifests record producer provenance, importer identity, DocC identity, transformation arguments, mount, and final site tree checksum. `publication.json` records Latest and topic inventories.
+For local candidates, `pnpm docs:package --artifact DIR --release-provenance FILE --output FILE` performs the same release binding and transformation without downloads. `pnpm docs:import` is the lower-level transform command; its default working output is ignored `.cache/documentation/imported`. Neither command modifies original release evidence. Existing numbered imports and package outputs cannot be overwritten.
 
-`pnpm build` verifies these website identities and copies the deployable trees into the final static output:
+Adopt the new release’s lock entry in a reviewed source change and select Latest explicitly. Publishing a bundle alone does not change the live website. A corrected website derivative needs a new immutable asset identity/tag and reviewed lock update; never replace bytes behind an existing digest.
 
-- `dist/UndoKit/` presents Latest.
-- `dist/UndoKit/versions/<version>/` contains numbered snapshots.
-- `dist/UndoKit/publication.json` supplies the version selector.
-- `dist/UndoKit/_folio/` contains shared website navigation assets.
-- `dist/UndoKit/latest/` keeps the legacy Latest entry working.
+## Website build
 
-The original archives and provenance files remain in the source repository and are excluded from the public export. Exporting does not modify any retained release bytes or checksums. The static-host directory index opens each documentation page, and DocC supplies the browser-side renderer and search.
+`pnpm dev` and `pnpm build` fetch the locked website bundles through `scripts/prepare-public.mjs`. The builder verifies the downloaded tarball digest before extraction, rejects unsafe archive paths, links, and special entries, and checks release-manifest binding, clean source/producer identity, original archive/export hashes, transformed website hashes, mounts, and topic inventories. It stages the complete public tree before swapping it into place; failures preserve the preceding export. A lock prevents simultaneous exporters. Inspect `public.lock` or `public.previous/` after a killed process before removing them.
 
-Website customizations belong in the importer and `src/documentation/assets/`. For changes to generated HTML, reimport each retained original with its adjacent release manifest into a fresh `--output` tree, importing the intended Latest version last. Validate and replace the tracked derivatives in a reviewed commit. Shared navigation assets are ordinary website source and are copied after documentation verification. Do not hand-edit generated snapshots and leave stale digests.
+A warm build can run without network:
 
-The export command validates all inputs before replacing `public/UndoKit/`. A failed validation preserves the preceding export. A lock prevents simultaneous exporters; a leftover `public/UndoKit.lock` after a killed process should be inspected and removed only when no exporter remains. Original importer candidates and website derivatives use different digests because they describe different bytes. `empty-directories.json` records empty DocC resource directories that Git cannot store. The importer refreshes this inventory; the exporter restores those directories after a fresh checkout before verifying the original tree hashes. No placeholder files or altered checksums are introduced.
+```sh
+node scripts/prepare-public.mjs --offline
+```
 
-## Cutover
+An offline cache miss, changed digest, tampered original/derivative, or invalid Latest selection fails the build. A custom `--cache DIR`, `--output DIR`, or `--lockfile FILE` is available for validation. Keep cache and output paths separate.
 
-Follow [GitHub Pages operation](sites.md#github-pages). Keep the old deployment available until the combined artifact is ready, then coordinate retirement of UndoKit's separate project Pages site with the root hosting switch. Verify actual hosted latest/archive navigation, assets, search, and deep refresh. Never infer production acceptance from local export success.
+Latest is `/documentation/undokit/`. DocC’s standard topic URLs continue beneath that path. Numbered exports remain isolated at `/UndoKit/versions/<version>/documentation/undokit/`; the version selector preserves a topic where available and explains fallback to the chosen version’s home otherwise. `/UndoKit/`, `/UndoKit/latest/`, and old Latest topic URLs redirect to the shorter canonical route. The exploratory 0.2.0 root redirects to Latest; its former topic archive is not retained in this rollout.
 
-## Agreed direction: release assets instead of tracked output
+Root-hosted DocC also owns `public/{css,data,downloads,images,img,index,js,videos}/` and its renderer metadata/image files. Astro owns the homepage, its `_astro` assets, the `/documentation/` landing page, and ordinary public files such as CNAME, favicon.svg, and the license. Do not author resources in the reserved DocC paths. Adding another independently generated framework at the root requires a shared renderer/index strategy; the builder deliberately refuses unknown root exports rather than silently overwriting authored pages. Shared navigation belongs in `src/documentation/assets/` and is published under `/_documentation/undokit/`. Original release evidence stays in the package/cache and is never exported publicly.
 
-Generate documentation once on the UndoKit macOS/Xcode release runner, and publish permanent, versioned release assets. The website should fetch pinned assets during its Linux build, verify reviewed SHA-256 digests and release provenance, and assemble Latest plus archives into ignored `public/UndoKit/`. Source comments/catalogs continue to belong to UndoKit. Latest remains an explicit website selection rather than a floating network lookup.
-
-A raw `.doccarchive` alone does not make the current pipeline Linux-ready: `scripts/documentation/import.rb` uses Xcode’s `xcrun docc` to rebase static exports for both `/UndoKit/` and `/UndoKit/versions/<version>/`. The release handoff therefore needs the original archive **and the required static exports**, prepared on macOS, or a separately validated Linux DocC transformation toolchain. Website navigation stays owned by this repository. The current exporter verifies retained copies; it does not yet download these proposed assets.
-
-As checked on 2026-10-19, the public 0.2.2 release has the XCFramework, release manifest, qualification evidence, and checksum file, but no documentation archive/export bundle. The producer’s `Versioned documentation` workflow retains candidates for 90 days, which is unsuitable as a permanent build dependency. See the [release assets](https://github.com/Folio-Suite/UndoKit/releases/tag/0.2.2) and [producer workflow](https://github.com/Folio-Suite/UndoKit/blob/main/.github/workflows/documentation.yml).
-
-Before deleting tracked snapshots: publish immutable bundles for every retained version; bind each bundle to its release and full source revision; commit a small lockfile with asset identities/digests and explicit Latest; test clean-cache downloads, corrupted/missing assets, offline cache reuse, and preservation of previous output on failure; then verify the full static build and version selector. Keep the original release archives and manifests recoverable. Existing snapshots remain deliberately retained until that replacement is operational. This hygiene pass records the accepted design without changing UndoKit’s release publication or weakening its provenance contract.
+The producer’s separate Pages deployment is retired. Publishing this site still requires the explicit main-branch Pages workflow dispatch; see [site operation](sites.md#github-pages).

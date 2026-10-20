@@ -57,37 +57,49 @@ test('real DocC assets, version selection, direct refresh and search work on a s
     if (response.status() >= 400) failures.push(`${response.status()} ${response.url()}`)
   })
   page.on('pageerror', (error) => failures.push(error.message))
-  await page.goto('/UndoKit/')
+  await page.goto('/documentation/undokit/')
   await expect(page.getByRole('heading', { level: 1, name: 'UndoKit', exact: true })).toBeVisible()
   await expect(page.getByRole('combobox', { name: 'UndoKit version' })).toHaveValue('latest')
-  await page.goto('/UndoKit/documentation/undokit/historysession/')
-  await page.getByRole('combobox', { name: 'UndoKit version' }).selectOption('0.2.0')
+  await page.goto('/documentation/undokit/historysession/')
+  await page.getByRole('combobox', { name: 'UndoKit version' }).selectOption('0.2.2')
   await expect(page).toHaveURL(
-    /\/UndoKit\/versions\/0\.2\.0\/documentation\/undokit\/historysession\//,
+    /\/UndoKit\/versions\/0\.2\.2\/documentation\/undokit\/historysession\//,
   )
   await page.reload()
-  await expect(page.getByRole('combobox', { name: 'UndoKit version' })).toHaveValue('0.2.0')
+  await expect(page.getByRole('combobox', { name: 'UndoKit version' })).toHaveValue('0.2.2')
   const filter = page.getByPlaceholder('Filter')
   await filter.fill('HistorySession')
   await expect(
     page.getByRole('link', { name: 'HistorySession', exact: true }).first(),
   ).toBeVisible()
-  expect((await request.get('/UndoKit/_folio/selector.js')).headers()['content-type']).toContain(
-    'javascript',
-  )
+  expect(
+    (await request.get('/_documentation/undokit/selector.js')).headers()['content-type'],
+  ).toContain('javascript')
   expect((await request.get('/UndoKit/versions/0.2.0/original/manifest.json')).status()).toBe(404)
   await page.waitForLoadState('networkidle')
   expect(failures).toEqual([])
 })
 
-test('the version selector explains an unavailable older topic and legacy latest links work', async ({
+test('the version selector explains a missing topic and legacy latest links reach the canonical route', async ({
   page,
 }) => {
-  await page.goto('/UndoKit/documentation/undokit/historysession/setnativeactionnameresolver(_:)/')
-  await page.getByRole('combobox', { name: 'UndoKit version' }).selectOption('0.2.0')
+  await page.route('**/_documentation/undokit/publication.json', async (route) => {
+    const response = await route.fetch()
+    const registry = await response.json()
+    registry.versions = registry.versions.map((version: { routes: string[] }) => ({
+      ...version,
+      routes: [],
+    }))
+    await route.fulfill({ response, json: registry })
+  })
+  await page.goto('/documentation/undokit/historysession/setnativeactionnameresolver(_:)/')
+  await page.getByRole('combobox', { name: 'UndoKit version' }).selectOption('0.2.2')
   await expect(page.locator('#folio-documentation-nav [role=status]')).toContainText(
     'That topic is unavailable in this version',
   )
+  await page.goto('/UndoKit/latest/documentation/undokit/historysession/')
+  await expect(page).toHaveURL('http://127.0.0.1:4322/documentation/undokit/historysession/')
   await page.goto('/UndoKit/latest/')
+  await expect(page).toHaveURL('http://127.0.0.1:4322/documentation/undokit/')
   await expect(page.getByRole('combobox', { name: 'UndoKit version' })).toHaveValue('latest')
 })

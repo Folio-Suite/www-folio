@@ -1,170 +1,142 @@
 // SPDX-FileCopyrightText: 2026 the Folio Project
 // SPDX-License-Identifier: MIT
-import {
-  cp,
-  lstat,
-  mkdir,
-  mkdtemp,
-  open,
-  readFile,
-  readdir,
-  rename,
-  rm,
-  writeFile,
-} from 'node:fs/promises'
-import { createHash } from 'node:crypto'
+import { cp, mkdir, mkdtemp, open, readdir, rename, rm, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { parseArgs } from 'node:util'
-
+import { json, materialize, validateLock } from './documentation/artifacts.mjs'
 const { values } = parseArgs({
   options: {
-    output: { type: 'string', default: 'public/UndoKit' },
-    'documentation-root': { type: 'string', default: 'documentation/undokit' },
+    output: { type: 'string', default: 'public' },
+    lockfile: { type: 'string', default: 'src/data/documentation.json' },
+    cache: { type: 'string', default: '.cache/documentation/assets' },
+    offline: { type: 'boolean', default: false },
   },
 })
 const output = path.resolve(values.output),
-  docs = path.resolve(values['documentation-root'])
-const sha = (bytes) => createHash('sha256').update(bytes).digest('hex')
-async function treeHash(root) {
-  const entries = []
-  async function walk(folder) {
-    for (const name of await readdir(folder)) {
-      const full = path.join(folder, name),
-        info = await lstat(full)
-      if (info.isSymbolicLink()) throw new Error(`Symlink refused: ${full}`)
-      entries.push({
-        full,
-        relative: path.relative(root, full).split(path.sep).join('/'),
-        directory: info.isDirectory(),
-      })
-      if (info.isDirectory()) await walk(full)
-      else if (!info.isFile()) throw new Error(`Non-file refused: ${full}`)
-    }
-  }
-  await walk(root)
-  const hash = createHash('sha256')
-  for (const entry of entries.sort((a, b) =>
-    a.relative < b.relative ? -1 : a.relative > b.relative ? 1 : 0,
-  )) {
-    hash.update(
-      entry.directory
-        ? `D\0${entry.relative}\0`
-        : `F\0${entry.relative}\0${sha(await readFile(entry.full))}\0`,
-    )
-  }
-  return hash.digest('hex')
-}
-const json = async (file) => JSON.parse(await readFile(file, 'utf8'))
-async function prepare() {
-  if (output === docs || output.startsWith(docs + path.sep) || docs.startsWith(output + path.sep))
-    throw new Error('Output and retained documentation must be separate')
-  // Git cannot retain empty DocC resource directories, but producer hashes include them.
-  // Recreate only the reviewed inventory; do not change the original artifact bytes.
-  let emptyDirectories = []
-  try {
-    emptyDirectories = await json(path.join(docs, 'empty-directories.json'))
-  } catch (error) {
-    if (error.code !== 'ENOENT') throw error
-  }
-  if (!Array.isArray(emptyDirectories)) throw new Error('Invalid empty-directory inventory')
-  for (const relative of emptyDirectories) {
-    if (
-      typeof relative !== 'string' ||
-      !/^(latest|versions\/\d+\.\d+\.\d+)\//.test(relative) ||
-      relative.split('/').some((part) => !part || part === '.' || part === '..') ||
-      relative.includes('\\')
-    )
-      throw new Error('Invalid empty-directory path')
-    await mkdir(path.join(docs, relative), { recursive: true })
-  }
-  const registry = await json(path.join(docs, 'publication.json'))
-  if (
-    registry.schemaVersion !== 1 ||
-    !Array.isArray(registry.versions) ||
-    !registry.versions.some((v) => v.version === registry.latest)
+  cache = path.resolve(values.cache)
+// DocC's root-hosted renderer owns these paths. Astro owns index.html, favicon.svg,
+// /documentation/index.html and all ordinary authored assets outside these names.
+const resources = [
+  'css',
+  'data',
+  'downloads',
+  'images',
+  'img',
+  'index',
+  'js',
+  'videos',
+  'metadata.json',
+  'theme-settings.json',
+  'developer-og-twitter.jpg',
+  'developer-og.jpg',
+  'favicon.ico',
+]
+const generated = new Set([...resources, 'documentation', 'UndoKit', '_documentation'])
+const escape = (value) =>
+  value.replace(
+    /[&<>"']/g,
+    (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c],
   )
-    throw new Error('Invalid documentation registry or latest version')
-  const versions = new Set()
-  const sites = [{ folder: 'latest', mount: '/UndoKit/', version: registry.latest }]
-  for (const entry of registry.versions) {
-    if (
-      !/^\d+\.\d+\.\d+$/.test(entry.version) ||
-      versions.has(entry.version) ||
-      entry.basePath !== `/UndoKit/versions/${entry.version}/` ||
-      !Array.isArray(entry.routes)
-    )
-      throw new Error('Invalid or duplicate version')
-    versions.add(entry.version)
-    sites.push({
-      folder: `versions/${entry.version}`,
-      mount: `/UndoKit/versions/${entry.version}/`,
-      version: entry.version,
-    })
-  }
-  // Verify every input before touching the previous public export.
-  for (const site of sites) {
-    const manifest = await json(path.join(docs, site.folder, 'manifest.json'))
-    site.expectedHash = manifest.website.siteTreeSHA256
-    if (
-      manifest.producerManifest.version !== site.version ||
-      manifest.website.basePath !== site.mount ||
-      (await treeHash(path.join(docs, site.folder, 'site'))) !== manifest.website.siteTreeSHA256
-    )
-      throw new Error(`Documentation identity mismatch: ${site.folder}`)
-  }
+async function redirect(root, relative, target) {
+  const filename = path.join(root, relative, 'index.html')
+  await mkdir(path.dirname(filename), { recursive: true })
+  const canonical = 'https://foliosuite.dev' + target
+  await writeFile(
+    filename,
+    `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=${escape(target)}"><link rel="canonical" href="${escape(canonical)}"><title>UndoKit documentation</title><script>location.replace(${JSON.stringify(target)}+location.search+location.hash)</script></head><body><a href="${escape(target)}">Continue to UndoKit documentation</a></body></html>\n`,
+  )
+}
+async function prepare() {
+  if (
+    cache === output ||
+    cache.startsWith(output + path.sep) ||
+    output.startsWith(cache + path.sep)
+  )
+    throw new Error('Cache and public output must be separate')
+  const lock = await json(values.lockfile)
+  validateLock(lock)
   await mkdir(path.dirname(output), { recursive: true })
-  const lock = await open(output + '.lock', 'wx')
+  const guard = await open(output + '.lock', 'wx')
+  const bundles = []
   let working
   const backup = output + '.previous'
   try {
     try {
-      await lstat(backup)
-      throw new Error('A previous export backup needs inspection')
-    } catch (e) {
-      if (e.code !== 'ENOENT') throw e
+      await readdir(backup)
+      throw new Error('A previous public backup requires inspection')
+    } catch (error) {
+      if (error.code !== 'ENOENT') throw error
     }
+    for (const entry of lock.versions)
+      bundles.push({ ...(await materialize(entry, cache, values.offline)), entry })
+    const latest = bundles.find((bundle) => bundle.entry.version === lock.latest)
     working = await mkdtemp(path.join(path.dirname(output), '.folio-public-'))
-    const destination = working
-    await cp(path.join(docs, 'latest/site'), destination, { recursive: true })
-    if ((await treeHash(destination)) !== sites[0].expectedHash)
-      throw new Error('Latest changed during export')
-    for (const site of sites.slice(1)) {
-      const target = path.join(destination, site.folder)
-      await cp(path.join(docs, site.folder, 'site'), target, { recursive: true })
-      if ((await treeHash(target)) !== site.expectedHash)
-        throw new Error(`Snapshot changed during export: ${site.version}`)
+    // Preserve authored public assets, and discard only the explicitly owned generated paths.
+    try {
+      for (const name of await readdir(output))
+        if (!generated.has(name))
+          await cp(path.join(output, name), path.join(working, name), {
+            recursive: true,
+            dereference: false,
+          })
+    } catch (error) {
+      if (error.code !== 'ENOENT') throw error
     }
+    const site = path.join(latest.root, 'latest/site')
+    const allowed = new Set([...resources, 'documentation', 'index.html', 'favicon.svg'])
+    for (const name of await readdir(site))
+      if (!allowed.has(name)) throw new Error(`Unrecognized DocC root resource: ${name}`)
+    for (const name of [...resources, 'documentation'])
+      await cp(path.join(site, name), path.join(working, name), { recursive: true })
+    const registry = {
+      schemaVersion: 1,
+      latest: lock.latest,
+      latestBasePath: '/',
+      versions: bundles.map((bundle) => bundle.registry),
+    }
+    const navigation = path.join(working, '_documentation/undokit')
+    await cp('src/documentation/assets', navigation, { recursive: true })
     await writeFile(
-      path.join(destination, 'publication.json'),
+      path.join(navigation, 'publication.json'),
       JSON.stringify(registry, null, 2) + '\n',
     )
-    await cp('src/documentation/assets', path.join(destination, '_folio'), { recursive: true })
-    await mkdir(path.join(destination, 'latest'))
-    await writeFile(
-      path.join(destination, 'latest/index.html'),
-      '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=/UndoKit/"><title>Latest UndoKit documentation</title><link rel="canonical" href="https://foliosuite.dev/UndoKit/"></head><body><a href="/UndoKit/">Latest UndoKit documentation</a></body></html>\n',
-    )
+    for (const bundle of bundles)
+      await cp(
+        path.join(bundle.root, 'versions', bundle.entry.version, 'site'),
+        path.join(working, 'UndoKit/versions', bundle.entry.version),
+        { recursive: true },
+      )
+    for (const route of latest.registry.routes) {
+      const target = '/' + route
+      await redirect(working, path.join('UndoKit', route), target)
+      await redirect(working, path.join('UndoKit/latest', route), target)
+    }
+    await redirect(working, 'UndoKit', '/documentation/undokit/')
+    await redirect(working, 'UndoKit/latest', '/documentation/undokit/')
+    // 0.2.0 was an exploratory publication; only 0.2.2 is retained in this first rollout.
+    await redirect(working, 'UndoKit/versions/0.2.0', '/documentation/undokit/')
     let moved = false
     try {
       await rename(output, backup)
       moved = true
-    } catch (e) {
-      if (e.code !== 'ENOENT') throw e
+    } catch (error) {
+      if (error.code !== 'ENOENT') throw error
     }
     try {
       await rename(working, output)
       working = undefined
-    } catch (e) {
+    } catch (error) {
       if (moved) await rename(backup, output)
-      throw e
+      throw error
     }
     if (moved) await rm(backup, { recursive: true })
     console.log(
-      `Static API documentation prepared: latest ${registry.latest}, ${versions.size} retained versions`,
+      `Prepared pinned API artifacts: Latest ${lock.latest}; canonical /documentation/undokit/`,
     )
   } finally {
     if (working) await rm(working, { recursive: true, force: true })
-    await lock.close()
+    for (const bundle of bundles) await rm(bundle.root, { recursive: true, force: true })
+    await guard.close()
     await rm(output + '.lock', { force: true })
   }
 }

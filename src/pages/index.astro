@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 import Page from '../layouts/Page.astro'
 import { publishedPosts, displayDate } from '../lib/blog'
-import publication from '../../documentation/undokit/publication.json'
+import publication from '../data/documentation.json'
 const posts = (await publishedPosts()).slice(0, 3)
 ---
 
@@ -35,7 +35,7 @@ const posts = (await publishedPosts()).slice(0, 3)
         <span class="release-pill">{publication.latest}</span>Latest documented release
       </p>
       <div class="card-links">
-        <a href="/UndoKit/">Documentation →</a>
+        <a href="/documentation/undokit/">Documentation →</a>
         <a href={`https://github.com/Folio-Suite/UndoKit/releases/tag/${publication.latest}`}>
           Release notes ↗
         </a>

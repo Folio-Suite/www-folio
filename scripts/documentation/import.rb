@@ -91,7 +91,7 @@ module FolioDocumentation
         resolved = File.join(resolved, 'index.html') if File.directory?(resolved)
         check(File.file?(resolved), "HTML resource has no static target: #{url}")
       end
-      html.sub!(/<head\b[^>]*>/i) { |head| "#{head}<link rel=\"stylesheet\" href=\"/UndoKit/_folio/selector.css\"><script defer src=\"/UndoKit/_folio/selector.js\"></script>" }
+      html.sub!(/<head\b[^>]*>/i) { |head| "#{head}<link rel=\"stylesheet\" href=\"/_documentation/undokit/selector.css\"><script defer src=\"/_documentation/undokit/selector.js\"></script>" }
       File.write(path, html)
     end
     routes = html_files.map { |path| path.delete_prefix(site + '/').sub(/index\.html\z/, '') }.sort
@@ -150,10 +150,10 @@ module FolioDocumentation
         write_json(File.join(target, 'manifest.json'), identity)
         FileUtils.rm_rf(File.join(working, 'latest'))
         FileUtils.mkdir_p(File.join(working, 'latest'))
-        latest_hash, = transform(transform_archive, File.join(working, 'latest/site'), '/UndoKit/')
+        latest_hash, = transform(transform_archive, File.join(working, 'latest/site'), '/')
         latest_identity = Marshal.load(Marshal.dump(identity))
-        latest_identity['website'].merge!('basePath' => '/UndoKit/', 'siteTreeSHA256' => latest_hash)
-        latest_identity['website']['command'][-1] = '/UndoKit'
+        latest_identity['website'].merge!('basePath' => '/', 'siteTreeSHA256' => latest_hash)
+        latest_identity['website']['command'][-1] = ''
         write_json(File.join(working, 'latest/manifest.json'), latest_identity)
         FileUtils.rm_rf(transform_archive)
         registry['latest'] = version
@@ -174,11 +174,11 @@ module FolioDocumentation
         FileUtils.rm_rf(working) if File.exist?(working)
       end
     end
-    puts "Imported UndoKit #{version}; latest documentation: /UndoKit/"
+    puts "Imported UndoKit #{version}; latest documentation: /documentation/undokit/"
   end
 
   def run(argv)
-    options = { output: File.expand_path('../../documentation/undokit', __dir__) }
+    options = { output: File.expand_path('../../.cache/documentation/imported', __dir__) }
     OptionParser.new do |parser|
       parser.banner = 'Usage: import.rb --artifact DIR --release-provenance FILE [--output DIR]'
       parser.on('--artifact DIR') { |value| options[:artifact] = value }

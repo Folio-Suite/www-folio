@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 the Folio Project
 // SPDX-License-Identifier: MIT
 import Page from '../layouts/Page.astro'
-import publication from '../../documentation/undokit/publication.json'
+import publication from '../data/documentation.json'
 ---
 
 <Page
@@ -18,7 +18,7 @@ import publication from '../../documentation/undokit/publication.json'
     <h2>UndoKit</h2>
     <p>Durable undo and redo history for applications.</p>
     <div class="card-links">
-      <a href="/UndoKit/">Latest documentation ({publication.latest}) →</a>
+      <a href="/documentation/undokit/">Latest documentation ({publication.latest}) →</a>
       <a href="https://github.com/Folio-Suite/UndoKit">Source ↗</a>
     </div>
     <h3>Retained versions</h3>

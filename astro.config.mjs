@@ -2,15 +2,16 @@
 // SPDX-License-Identifier: MIT
 import { defineConfig } from 'astro/config'
 import sitemap from '@astrojs/sitemap'
-import publication from './documentation/undokit/publication.json' with { type: 'json' }
+import publication from './src/data/documentation.json' with { type: 'json' }
 export default defineConfig({
   site: 'https://foliosuite.dev',
   trailingSlash: 'always',
   integrations: [
     sitemap({
-      customPages: ['/UndoKit/', ...publication.versions.map((version) => version.basePath)].map(
-        (path) => new URL(path, 'https://foliosuite.dev').href,
-      ),
+      customPages: [
+        '/documentation/undokit/',
+        ...publication.versions.map((version) => version.basePath),
+      ].map((path) => new URL(path, 'https://foliosuite.dev').href),
       filter: (url) => !url.endsWith('/404/'),
     }),
   ],

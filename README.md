@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 
 # Folio Suite development website
 
-A static Astro site for **foliosuite.dev**: repository-managed pages, a Markdown development blog, and versioned API documentation. All published files are generated into `dist/`. Hosting needs no application server, database, CMS, or paid platform.
+A static Astro site for **foliosuite.dev**: repository-managed pages, a Markdown development blog, and versioned API documentation. Generated documentation is stored in permanent release assets, with only its lockfile and build tooling tracked here. All published files are generated into `dist/`. Hosting needs no application server, database, CMS, or paid platform.
 
 Use Node 24 and the pnpm version pinned in `package.json`:
 
@@ -14,7 +14,7 @@ pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-The development server includes the prepared API documentation. `pnpm build` creates the complete static website; `pnpm preview` serves that production output locally. Run `pnpm check` and `pnpm test` before committing. Browser tests need `pnpm exec playwright install chromium`; tests build and serve the real production output in `dist/`.
+The first build downloads digest-pinned API documentation release assets into an ignored cache; the development server includes the verified static exports. `pnpm build` creates the complete static website; `pnpm preview` serves that production output locally. Run `pnpm check` and `pnpm test` before committing. Browser tests need `pnpm exec playwright install chromium`; tests build and serve the real production output in `dist/`.
 
 - [Content and GitHub Pages publishing](docs/sites.md)
 - [API documentation import and provenance](docs/documentation.md)
