@@ -28,7 +28,7 @@ ruby scripts/documentation/release-asset.rb \
   --output /absolute/path/to/UndoKit-0.2.2-documentation.tar.gz
 ```
 
-Then manually run this repository’s `Package documentation release` workflow with the version and independently reviewed SHA-256 values for the producer archive and published release manifest. Its Mac job downloads and verifies those pins, runs the website importer using Xcode DocC, packages the website bundle, and re-verifies the package. `publish=false` produces a reviewable Actions artifact; `publish=true` additionally publishes an immutable website-asset release through the `documentation-assets` environment. Configure an environment reviewer if desired. The ordinary Linux website build has no Xcode requirement.
+Then manually run this repository’s `Package documentation release` workflow with the version and independently reviewed SHA-256 values for the producer archive and published release manifest. Its Mac job downloads and verifies those pins, runs the website importer using Xcode DocC, packages the website bundle, and re-verifies the package. `publish=false` produces a reviewable Actions artifact; `publish=true` additionally publishes an immutable website-asset release through the `documentation-assets` environment. Configure an environment reviewer if desired. The ordinary Linux website build has no Xcode requirement. Both repositories and their documentation assets are public; website builds download pinned assets without a GitHub login or token.
 
 The corresponding local command is:
 

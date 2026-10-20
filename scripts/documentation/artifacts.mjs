@@ -148,10 +148,27 @@ export async function materialize(entry, cache, offline) {
     const lock = await open(root + '.lock', 'wx')
     const download = root + '.download'
     try {
+      const url = new URL(entry.asset.url)
+      const parts = url.pathname.split('/')
+      if (
+        url.search ||
+        url.hash ||
+        parts.length !== 7 ||
+        !/^undokit-docs-[0-9]+\.[0-9]+\.[0-9]+-site-v[0-9]+$/.test(parts[5]) ||
+        parts[6] !== `UndoKit-${entry.version}-website.tar.gz`
+      )
+        throw new Error('Invalid immutable artifact URL')
       const response = await fetch(entry.asset.url, { signal: AbortSignal.timeout(120000) })
       if (!response.ok) throw new Error(`Artifact download failed: HTTP ${response.status}`)
-      const bytes = Buffer.from(await response.arrayBuffer())
-      if (bytes.length > 256 * 1024 * 1024 || sha(bytes) !== entry.asset.sha256)
+      const chunks = []
+      let size = 0
+      for await (const chunk of response.body) {
+        size += chunk.length
+        if (size > 256 * 1024 * 1024) throw new Error('Artifact exceeds size limit')
+        chunks.push(chunk)
+      }
+      const bytes = Buffer.concat(chunks)
+      if (sha(bytes) !== entry.asset.sha256)
         throw new Error('Downloaded artifact checksum mismatch')
       await writeFile(download, bytes, { flag: 'wx' })
       await rename(download, archive)

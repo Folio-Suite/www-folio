@@ -5,6 +5,8 @@ SPDX-License-Identifier: MIT
 
 # foliosuite.dev Pages cutover
 
+> Subsequent artifact-pipeline and canonical-URL work is recorded in [artifact-pipeline.md](artifact-pipeline.md). This record describes the initial production cutover.
+
 Completed October 19, 2026 (America/Chicago), with explicit user authorization to perform the live cutover.
 
 ## Deployment

@@ -2,10 +2,7 @@ node_modules/
 .pnpm-store/
 dist/
 .astro/
-.generated-public/
 public/UndoKit/
-public/UndoKit.lock
-public/UndoKit.previous/
 .folio-public-*/
 .DS_Store
 .env*
@@ -18,7 +15,6 @@ public/media/
 /playwright-report/
 /blob-report/
 tsconfig.tsbuildinfo
-/documentation/*.lock
 
 .cache/
 /public.lock
