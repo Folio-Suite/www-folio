@@ -144,6 +144,7 @@ it('imports a bound release and publishes latest with provenance and website nav
   expect(result.status).toBe(0)
   const registry = JSON.parse(readFileSync(join(f.output, 'publication.json'), 'utf8'))
   expect(registry.latest).toBe('1.2.3')
+  expect(readFileSync(join(f.output, 'empty-directories.json'), 'utf8')).not.toContain('/.\"')
   expect(JSON.parse(readFileSync(join(f.output, 'empty-directories.json'), 'utf8'))).toContain(
     'latest/site/videos/dev.foliosuite.UndoKit',
   )
