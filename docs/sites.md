@@ -33,6 +33,8 @@ Set `draft: false` when ready. Drafts and future-dated posts are omitted from th
 
 ## GitHub Pages
 
+Current production: the domain is served by `www-folio` Pages. The October 19, 2026 cutover and hosted acceptance are recorded in [cutover.md](validation/cutover.md). The former organization-root repository retains its GitHub URL without the custom domain; UndoKit’s separate Pages site is deactivated.
+
 Astro supports static GitHub Pages deployment and a custom-domain `CNAME` file. This project uses `site: https://foliosuite.dev`, directory-style page URLs, and no repository-name base prefix. These settings are for the custom domain, not a `github.io/www-folio/` preview. [Astro deployment guide](https://docs.astro.build/en/guides/deploy/github/).
 
 The `Static development website` workflow checks, formats, tests, and builds pushes and pull requests, then uploads the official Pages artifact. To publish from main, manually run it with **publish** enabled. The same repository deploys through `actions/deploy-pages` using the built-in `GITHUB_TOKEN`, `pages: write`, `id-token: write`, and the `github-pages` environment. There is no hosting repository checkout, deploy branch, or cross-repository token. Configure an environment reviewer if required.

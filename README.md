@@ -21,6 +21,6 @@ The development server includes the prepared API documentation. `pnpm build` cre
 - [Hygiene audit and remaining decisions](docs/validation/hygiene.md)
 - [Static migration validation](docs/validation/static-site.md)
 
-Source and GitHub Pages publishing both belong here. The former `Folio-Suite/folio-suite.github.io` root has been consolidated into this site; see the cutover instructions before retiring its deployment. Publishing is deliberately triggered; ordinary pushes build and test the site without changing production. Product-site work for `foliosuite.app` is outside this rebuild.
+Source and GitHub Pages publishing both belong here. The former `Folio-Suite/folio-suite.github.io` root has been consolidated into this site; the live domain now deploys from www-folio, with [hosted acceptance recorded](docs/validation/cutover.md). Publishing is deliberately triggered; ordinary pushes build and test the site without changing production. Product-site work for `foliosuite.app` is outside this rebuild.
 
 The previous Payload application remains recoverable in Git history through `f9778d4`. Local ignored secrets and uploads have not been deleted or imported into the static site. This migration does not export a hosted database or revoke external services; Vercel shutdown is handled separately.
