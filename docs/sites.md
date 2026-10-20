@@ -6,6 +6,8 @@ Header and Footer each expose separate Product and Development navigation lists.
 
 ## Routing and layouts
 
+The `/UndoKit` namespace is reserved for generated API documentation and unavailable on the Product destination. A separate route handler serves the DocC application without the editorial React layout. Latest topics live under `/UndoKit/documentation/undokit/`; retained releases use `/UndoKit/versions/<version>/documentation/undokit/`. Source generation remains in UndoKit; this repository imports and transforms selected artifacts. See [documentation publication](documentation.md).
+
 The shared `(frontend)` layout hosts common providers, navigation, analytics, and typography. Under it, `(frontend-app)/sites/product` and `(frontend-dev)/sites/development` have separate layout entry points. Both use the shared page renderer in `src/sites/Page.tsx`.
 
 Next.js Proxy chooses a site from the request Host and rewrites public page URLs into those internal route trees. The browser keeps the public URL. Direct external requests to `/sites/...` return 404. A shared fallback resolves site-scoped nested redirects; sources owned by CMS/API or specialized Blog routes are rejected. Unrecognized hosts return 421. Public apex and `www` hosts choose their own site even when a query or cookie requests the other site. Canonicals use the apex domain.

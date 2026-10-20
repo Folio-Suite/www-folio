@@ -46,6 +46,14 @@ const nextConfig: NextConfig = {
     return webpackConfig
   },
   reactStrictMode: true,
+  outputFileTracingIncludes: {
+    '/UndoKit/\\[\\[...path\\]\\]': [
+      './documentation/undokit/publication.json',
+      './documentation/undokit/latest/site/**/*',
+      './documentation/undokit/versions/*/site/**/*',
+      './src/documentation/assets/*',
+    ],
+  },
   redirects,
   turbopack: {
     root: path.resolve(dirname),

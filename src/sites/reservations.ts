@@ -39,8 +39,6 @@ export const reserveRedirectPath: CollectionBeforeChangeHook = async ({
     throw new APIError('Use a normalized relative path for the redirect source.', 400)
   }
   const segments = from.slice(1).split('/')
-  if (['api', 'admin', 'next', '_next', 'sites'].includes(segments[0]))
-    throw new APIError('This redirect source is reserved by the website.', 400)
   if (segments[0] === 'blog' && segments.length > 2)
     throw new APIError('This redirect source is reserved by Blog routing.', 400)
   let slug: string
@@ -49,6 +47,8 @@ export const reserveRedirectPath: CollectionBeforeChangeHook = async ({
   } catch {
     throw new APIError('Use a valid encoded redirect path.', 400)
   }
+  if (['api', 'admin', 'next', '_next', 'sites', 'UndoKit'].includes(slug.split('/')[0]))
+    throw new APIError('This redirect source is reserved by the website.', 400)
   if (reservedPageSlugs.has(slug)) throw new APIError('This path is reserved by the website.', 400)
   const pages = await req.payload.find({
     collection: 'pages',

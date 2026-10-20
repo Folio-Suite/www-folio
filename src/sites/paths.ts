@@ -1,4 +1,5 @@
 export const reservedPageSlugs = new Set([
+  'UndoKit',
   'sites',
   'admin',
   'api',

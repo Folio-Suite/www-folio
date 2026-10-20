@@ -19,6 +19,9 @@ export function proxy(request: NextRequest) {
     headers.set('cookie', request.cookies.toString())
   }
   const path = request.nextUrl.pathname
+  if ((path === '/UndoKit' || path.startsWith('/UndoKit/')) && destination.site !== 'development') {
+    return new NextResponse('Not found', { status: 404 })
+  }
   const isPage = isEditorialPath(path)
   const destinationURL = request.nextUrl.clone()
   destinationURL.pathname = `/sites/${destination.site}${path === '/' ? '' : path}`

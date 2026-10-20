@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test'
+import path from 'node:path'
 
 /**
  * Read environment variables from file.
@@ -36,6 +37,7 @@ export default defineConfig({
   ],
   webServer: {
     command: 'node node_modules/next/dist/bin/next dev',
+    env: { FOLIO_DOCUMENTATION_ROOT: path.resolve('tests/fixtures/documentation') },
     reuseExistingServer: false,
     url: 'http://localhost:3000',
   },

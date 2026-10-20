@@ -8,6 +8,8 @@ The clean template is reconciled with the tested publishing base from `ctwelve/w
 
 Product and Development now have separate page destinations, route trees, navigation, canonical identity, sitemaps, and authenticated previews. See [site operation and architecture](docs/sites.md). Domain-scoped Blog behavior remains #4 and Webmentions remain #6. Repository specification publication is deferred. Manual DocC publication is tracked in #7.
 
+UndoKit API documentation is imported from verified release artifacts and integrated into the Development site. `/UndoKit/` opens the explicitly promoted latest release; the version selector opens retained release snapshots. See [documentation publication](docs/documentation.md) for import, provenance, validation, and cutover instructions.
+
 ## Development
 
 Use Node 24 and the pinned pnpm version. Run `pnpm install`, then `pnpm dev`. The ignored `.env.local` contains the Folio development configuration; preserve its integration-managed values. Set `NEXT_PUBLIC_SERVER_URL=http://localhost:3000` for local development. Local development defaults to Product; append `?site=development` to view Development. Public hosts select their own site.

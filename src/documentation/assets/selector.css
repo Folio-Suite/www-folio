@@ -1,0 +1,45 @@
+/* SPDX-FileCopyrightText: 2026 the Folio Project
+ * SPDX-License-Identifier: MIT */
+#folio-documentation-nav {
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem max(1rem, calc((100% - 1280px) / 2));
+  font:
+    400 14px/1.5 system-ui,
+    sans-serif;
+  background: #f5f5f7;
+  color: #1d1d1f;
+  border-bottom: 1px solid #86868b;
+}
+#folio-documentation-nav a {
+  color: inherit;
+  text-decoration: underline;
+  margin-right: auto;
+}
+#folio-documentation-nav label {
+  font-weight: 600;
+}
+#folio-documentation-nav select {
+  font: inherit;
+  color: inherit;
+  background: inherit;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid currentColor;
+  border-radius: 0.3rem;
+}
+#folio-documentation-nav :focus-visible {
+  outline: 3px solid #0071e3;
+  outline-offset: 3px;
+}
+#folio-documentation-nav [role='status']:not(:empty) {
+  flex-basis: 100%;
+}
+@media (prefers-color-scheme: dark) {
+  #folio-documentation-nav {
+    background: #1d1d1f;
+    color: #f5f5f7;
+  }
+}
