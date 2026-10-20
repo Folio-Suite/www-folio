@@ -53,3 +53,13 @@ Generated/vendor material is classified separately: retained DocC HTML/JSON/rend
 ## Convention references
 
 Compared against Astro’s [project structure](https://docs.astro.build/en/basics/project-structure/), [RSS recipe](https://docs.astro.build/en/recipes/rss/), [official sitemap integration](https://docs.astro.build/en/guides/integrations-guide/sitemap/), and [GitHub Pages guide](https://docs.astro.build/en/guides/deploy/github/). Direct Pages publishing uses GitHub’s [custom workflow contract](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages). The site uses these conventions without adding unused starter-template components or sample public posts.
+
+## Standards
+
+Independent code-review axis for `fa42dcd...6e3aad6`: no actionable findings. Reviewed owned source, importer/exporter, configuration, workflow, licensing, and active documentation against repository guidance and the code-smell baseline. Hosted acceptance is excluded.
+
+## Spec
+
+Independent code-review axis for `fa42dcd...6e3aad6`: no actionable findings. Static pages/blog/API docs, consolidated source/publishing, canonical Astro conventions, and preservation of release evidence match the requested scope. Live cutover and the explicitly deferred permanent release-asset pipeline remain recorded follow-up work.
+
+Review totals: Standards 0, Spec 0; neither axis has an outstanding actionable issue.
