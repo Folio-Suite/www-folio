@@ -1,0 +1,33 @@
+---
+// SPDX-FileCopyrightText: 2026 the Folio Project
+// SPDX-License-Identifier: MIT
+import Page from '../../layouts/Page.astro'
+import { publishedPosts, displayDate } from '../../lib/blog'
+const posts = await publishedPosts()
+---
+
+<Page title="Dev blog" description="Development notes from work on Folio Suite and its frameworks.">
+  <section class="intro compact">
+    <p class="eyebrow">Dev blog</p>
+    <h1>Notes from the work.</h1>
+    <p class="lede">Design decisions, implementation notes, and progress on Folio Suite.</p>
+  </section>
+  {posts.length ? (
+    <ul class="post-list">
+      {posts.map((post) => (
+        <li>
+          <time datetime={post.data.pubDate.toISOString()}>{displayDate(post.data.pubDate)}</time>
+          <h2>
+            <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+          </h2>
+          <p>{post.data.description}</p>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p class="empty-state">
+      No posts have been published yet. You can follow the <a href="/feed.xml">RSS feed</a> for
+      future notes.
+    </p>
+  )}
+</Page>

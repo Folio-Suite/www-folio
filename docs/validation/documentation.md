@@ -3,6 +3,8 @@ SPDX-FileCopyrightText: 2026 the Folio Project
 SPDX-License-Identifier: MIT
 -->
 
+> Historical validation of the retired Payload/Next.js implementation. Current validation is in [static-site.md](static-site.md).
+
 # UndoKit website documentation validation
 
 Validated October 19, 2026, using Node 24.19.0, the installed Xcode DocC compiler, and Playwright's matching Chromium 153 browser. Application tests used a disposable localhost PostgreSQL database; production services and credentials were not used.

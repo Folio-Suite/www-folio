@@ -31,3 +31,5 @@ The four Folio domains (`foliosuite.app`, `www.foliosuite.app`, `foliosuite.dev`
 Deploy with migration `20260912_024954_site_boundaries`; existing pages and redirects become Product. Verify actual hosted login and cross-domain preview after delivery. Reconcile duplicate site slugs before attempting to roll back to global uniqueness.
 
 Blog, feeds, archives, and search remain the shared foundation until #4; Webmention boundaries remain #6. Real Folio media lifecycle validation is #3. Separately installed `.agents/` files and `skills-lock.json` remain outside the implementation commits.
+> Historical validation of the retired Payload/Next.js implementation. Current validation is in [static-site.md](static-site.md).
+

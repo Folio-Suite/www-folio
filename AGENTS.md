@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 the Folio Project
+SPDX-License-Identifier: MIT
+-->
+
 ## Agent skills
 
 ### Issue tracker
@@ -12,12 +17,6 @@ Use the five default triage labels. Before classifying an issue, read `docs/agen
 
 Use a single root `CONTEXT.md` and `docs/adr/`. Before domain exploration or design work, read `docs/agents/domain.md`.
 
-<!-- BEGIN:nextjs-agent-rules -->
+## Static website
 
-# This is NOT the Next.js you know
-
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
-
-This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
-
-<!-- END:nextjs-agent-rules -->
+Use Astro static pages and repository-managed Markdown. Read `docs/sites.md` for content and GitHub Pages publication. Read `docs/documentation.md` before changing the UndoKit import or export pipeline. Run `pnpm check`, `pnpm test`, and `pnpm build` for implementation changes.

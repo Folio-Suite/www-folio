@@ -7,6 +7,8 @@ SPDX-License-Identifier: MIT
 
 Research date: October 19, 2026. Primary sources accessed on that date. This is a research recommendation, not an implemented deployment or accepted ADR.
 
+> Implementation update: the website now uses static Astro output. The Next.js routing observations below describe the earlier checkout; the DocC ownership, URL, and version-selector findings remain relevant.
+
 ## Finding
 
 The requested arrangement is feasible: keep API comments, DocC catalogs, compilation, and source validation in UndoKit; manage generated publication artifacts and website presentation in www-folio. DocC supports static hosting beneath a configured path. A release-version selector should be website-owned UI: the Swift Documentation Workgroup explicitly describes version navigation as something coordinated outside DocC, using URL prefixes and custom header/footer navigation. This is evidence for the approach, not a promise that every future DocC version lacks such a feature. [Hosting documentation](https://www.swift.org/documentation/docc/distributing-documentation-to-other-developers), [workgroup discussion](https://forums.swift.org/t/documentation-workgroup-meeting-22-september-2025/82283).

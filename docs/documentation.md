@@ -5,35 +5,39 @@ SPDX-License-Identifier: MIT
 
 # UndoKit documentation publication
 
-UndoKit owns API comments, its DocC catalog, compilation, and the release candidate archive. This repository owns imported originals, website derivatives, the latest promotion, and the version selector. Documentation is served only on the Development destination.
+UndoKit owns API comments, its DocC catalog, compilation, and release candidate archives. This repository owns imported originals, website derivatives, Latest promotion, and the version selector. The static Development website includes these derivatives without a runtime server.
 
 ## Manual import
 
-Obtain the documentation candidate directory and the published `UndoKit-<version>-manifest.json` release asset from the trusted UndoKit release. The candidate directory must contain `archive/`, `site/`, `producer.json`, and `manifest.json`, exactly as emitted by UndoKit's documentation staging command. Extract downloaded archives into a separate temporary directory before invoking the importer. The importer accepts an extracted local directory; it does not download or extract arbitrary archives.
-
-On a Mac with the selected Xcode DocC toolchain available:
+Obtain the original clean documentation candidate and the published `UndoKit-<version>-manifest.json` from the trusted UndoKit release. The extracted candidate contains `archive/`, `site/`, `producer.json`, and `manifest.json` exactly as emitted by UndoKit staging. On a Mac with Xcode's DocC toolchain:
 
 ```sh
 pnpm docs:import --artifact /absolute/path/to/candidate \
   --release-provenance /absolute/path/to/UndoKit-1.2.3-manifest.json
 ```
 
-The supplied release manifest is the trust anchor: acquire it from the intended published release, rather than creating one from the candidate. The importer checks its complete documentation binding, original archive and export tree checksums, producer checksum, clean source revision, toolchain identity binding, and producer command identity. It does not establish release authenticity through a network lookup.
+The supplied published manifest is the trust anchor: do not synthesize it from the candidate. The importer verifies the complete release binding, original archive/export/producer checksums, clean source revision, toolchain binding, and producer command. It does not establish release authenticity through a network lookup.
 
-The command transforms the retained original archive twice using `xcrun docc process-archive transform-for-static-hosting`: once for `/UndoKit/` and once for `/UndoKit/versions/<version>/`. It adds website navigation assets after transformation. It validates search inventory, deep-refresh pages, and HTML resource paths before replacing publication output. A failed validation or transform preserves the previous publication. An exclusive lock prevents concurrent imports.
+Each successful import explicitly promotes that version to Latest. Existing numbered originals are immutable; duplicate imports fail. Corrections to framework-authored release guidance require a separate reviewed correction workflow rather than replacing retained inputs.
 
-Review the generated diff under `documentation/undokit/` and run the repository checks before committing it. `--output /absolute/path` builds an isolated publication for evaluation. Every successful import explicitly promotes that version to Latest; numerical version sorting does not select the latest release. Existing version directories are immutable and duplicate imports fail. Documentation corrections require a separate future workflow rather than overwriting a retained version.
+## Retained and deployed files
 
-## Retained evidence
+`documentation/undokit/versions/<version>/` retains `original/`, `release-manifest.json`, a website `manifest.json`, and the rebased `site/`. Latest has its own site and manifest. The importer transforms the original archive separately for `/UndoKit/` and `/UndoKit/versions/<version>/`, then injects navigation links. Website manifests record producer provenance, importer identity, DocC identity, transformation arguments, mount, and final site tree checksum. `publication.json` records Latest and topic inventories.
 
-Each numbered version contains `original/` with the untouched candidate, `release-manifest.json` with the supplied release evidence, `site/` with the website derivative, and a website `manifest.json`. The website manifest records original provenance, release-manifest checksum, website Git revision, importer checksum, DocC identity, transformation arguments, mount, and final site tree checksum. The latest derivative has its own mount-specific manifest and checksum. `publication.json` records the explicitly promoted version and each numbered version's topic inventory.
+`pnpm build` verifies these website identities and copies the deployable trees into the final static output:
 
-The tree checksum format matches UndoKit: sorted relative paths, directory entries, and SHA-256 digests of file contents. Symlinks are rejected. The original producer export digest and transformed website digest describe different bytes and must remain separate.
+- `dist/UndoKit/` presents Latest.
+- `dist/UndoKit/versions/<version>/` contains numbered snapshots.
+- `dist/UndoKit/publication.json` supplies the version selector.
+- `dist/UndoKit/_folio/` contains shared website navigation assets.
+- `dist/UndoKit/latest/` keeps the legacy Latest entry working.
 
-Website customizations belong in the importer and `src/documentation/assets/` assets. Regenerate derivatives from original archives when changing generated HTML; hand edits invalidate recorded derivative checksums. Selector assets are shared website resources and receive normal Git review alongside the importer.
+The original archives and provenance files remain in the source repository and are excluded from the public export. Exporting does not modify any retained release bytes or checksums. The static-host directory index opens each documentation page, and DocC supplies the browser-side renderer and search.
 
-To regenerate website derivatives, import each retained `versions/<version>/original` candidate with its adjacent `release-manifest.json` into a fresh `--output` directory. Import the intended Latest version last. Validate the complete replacement, compare the original artifact hashes, and replace the tracked publication tree as part of a reviewed website commit. This preserves the immutable framework inputs while permitting website-owned HTML changes. The production file trace includes the generated sites and registry, and excludes retained originals and provenance manifests from the server bundle.
+Website customizations belong in the importer and `src/documentation/assets/`. For changes to generated HTML, reimport each retained original with its adjacent release manifest into a fresh `--output` tree, importing the intended Latest version last. Validate and replace the tracked derivatives in a reviewed commit. Shared navigation assets are ordinary website source and are copied after documentation verification. Do not hand-edit generated snapshots and leave stale digests.
+
+The export command validates all inputs before replacing `.generated-public/`. A failed validation preserves the preceding export. A lock prevents simultaneous exporters; a leftover `.generated-public.lock` after a killed process should be inspected and removed only when no exporter remains. Original importer candidates and website derivatives use different digests because they describe different bytes.
 
 ## Cutover
 
-Keep UndoKit's existing hosted documentation available until the Development site's imported output has passed direct topic refresh, assets/search, version switching, keyboard, and mobile checks on its deployed hostname. Then update incoming documentation links and arrange redirects for the old public URLs. The initial implementation does not disable the old deployment or infer that local checks prove production cutover.
+Follow [GitHub Pages operation](sites.md#github-pages). Keep the old deployment available until the combined artifact is ready, then coordinate retirement of UndoKit's separate project Pages site with the root hosting switch. Verify actual hosted latest/archive navigation, assets, search, and deep refresh. Never infer production acceptance from local export success.

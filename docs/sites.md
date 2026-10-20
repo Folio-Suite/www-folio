@@ -1,31 +1,44 @@
-# Product and Development sites
+<!--
+SPDX-FileCopyrightText: 2026 the Folio Project
+SPDX-License-Identifier: MIT
+-->
 
-Pages have a required Destination: Product (`foliosuite.app`) or Development (`foliosuite.dev`). Existing pages and redirects become Product during the migration. Each site reserves its own page slugs and redirect sources, so both may publish `/about`. Website routes such as `/blog`, `/admin`, and the internal routing namespace cannot be used as page slugs. Page slugs cannot contain dots, percent signs, slashes, query strings, or fragments.
+# Static development website
 
-Header and Footer each expose separate Product and Development navigation lists. Reference links use the target page's destination, including rich-text links. Public page metadata, canonical URLs, robots, and page sitemaps use the selected site's public origin. Blog content and subscriptions still share the common foundation until #4; Webmention site boundaries remain #6.
+The website targets `https://foliosuite.dev` and uses Astro's static output. Pages live in `src/pages/`; shared HTML and presentation live in `src/layouts/` and `src/styles/`. Ordinary pages ship HTML and CSS without a client framework. Static assets belong in `static/`, which is copied into the prepared public directory. Old ignored `public/media` uploads are outside that pipeline.
 
-## Routing and layouts
+The root reuses the visual identity and project links from `Folio-Suite/folio-suite.github.io`. Its UndoKit release label comes from the retained publication registry rather than a manually maintained version string. `/documentation/` lists available API references. `/404.html` provides the static-host error page.
 
-The `/UndoKit` namespace is reserved for generated API documentation and unavailable on the Product destination. A separate route handler serves the DocC application without the editorial React layout. Latest topics live under `/UndoKit/documentation/undokit/`; retained releases use `/UndoKit/versions/<version>/documentation/undokit/`. Source generation remains in UndoKit; this repository imports and transforms selected artifacts. See [documentation publication](documentation.md).
+## Development blog
 
-The shared `(frontend)` layout hosts common providers, navigation, analytics, and typography. Under it, `(frontend-app)/sites/product` and `(frontend-dev)/sites/development` have separate layout entry points. Both use the shared page renderer in `src/sites/Page.tsx`.
+Add Markdown under `src/content/blog/`. Filenames determine `/blog/<filename>/` URLs. Nested folders are supported. Front matter requires `title`, `description`, and `pubDate`; `author` is optional. `draft` defaults to false. `welcome.md` is an unpublished starter template, not a public announcement.
 
-Next.js Proxy chooses a site from the request Host and rewrites public page URLs into those internal route trees. The browser keeps the public URL. Direct external requests to `/sites/...` return 404. A shared fallback resolves site-scoped nested redirects; sources owned by CMS/API or specialized Blog routes are rejected. Unrecognized hosts return 421. Public apex and `www` hosts choose their own site even when a query or cookie requests the other site. Canonicals use the apex domain.
+```yaml
+---
+title: "An implementation note"
+description: "A short description of the work."
+pubDate: 2026-10-19
+author: "Author name"
+draft: true
+---
+```
 
-Localhost and the current deployment, branch, and project Vercel hostnames support `?site=product` or `?site=development`. The selection persists on that host; cross-site reference links retain the preview host and change the selection. Preview hosts are private/no-store and noindex. Public page rendering is dynamic; no full-route cache can reuse one domain's HTML for another. The page sitemap cache includes its Site argument, and the shared global cache includes lookup depth. Public global reads enforce publication access, and unresolved references are removed before navigation reaches the client. Menu edits and publication changes immediately expire navigation caches. Selected navigation alone is passed to its client component.
+Set `draft: false` when ready. Drafts and future-dated posts are omitted from the home page, blog index, article routes, RSS feed, and sitemap. Dates display in UTC. Published posts sort newest first; equal dates sort by filename. A scheduled post requires a rebuild after its publication date; this static site has no background scheduler.
 
-Both domains and their `www` aliases were verified on the Vercel project `ctwelvenet/www-folio`; personal domains were not changed.
+`/feed.xml` is the RSS feed. `/sitemap.xml` includes pages, published notes, and documentation roots. Canonical URLs always use foliosuite.dev, including during local preview.
 
-## Preview access
+## API documentation
 
-The CMS preview link names a collection and document ID. Its first request requires an authenticated editor and resolves the actual document destination. It issues a signed 15-minute grant containing the destination, collection, document ID, slug, editor ID, and editor origin. Public-domain previews hand off to the correct public domain; deployment previews remain on the deployment host.
+`pnpm dev` and `pnpm build` prepare `.generated-public/` before Astro runs. The preparer verifies every retained latest/version site hash and mount, copies only deployable sites plus shared navigation assets, and refuses invalid inputs before replacing existing output. See [API publication](documentation.md). Generated API pages remain ordinary files, so direct topic refreshes work on GitHub Pages without rewrites or a server.
 
-The destination validates the grant and establishes draft access without needing a production-domain login cookie. The grant is restricted to that document and site. HTTPS grants use a Secure, HttpOnly, SameSite=None partitioned cookie; localhost uses a development cookie. Preview pages identify their destination, are noindex, and refresh from the issuing editor origin. Exiting preview clears draft mode and the grant. A grant is a temporary bearer capability; never log or share its URL. Email is not involved.
+## GitHub Pages
 
-The shared editorial workspace is trusted; Destination separates publication audiences, not editor permissions. All authenticated editors can edit both destinations.
+Astro supports static GitHub Pages deployment and a custom-domain `CNAME` file. This project uses `site: https://foliosuite.dev`, directory-style page URLs, and no repository-name base prefix. These settings are for the custom domain, not a `github.io/www-folio/` preview. [Astro deployment guide](https://docs.astro.build/en/guides/deploy/github/).
 
-## Migration and operation
+The `Static development website` workflow builds, checks, and tests pushes and pull requests, then retains the full `dist/` artifact. To publish from main, manually run it with **publish** enabled. Publication uses the `development-pages` environment and the environment secret `DEVELOPMENT_PAGES_TOKEN`, a fine-grained token with Contents read/write access only to `Folio-Suite/folio-suite.github.io`. Configure an environment reviewer if required. The normal source-repository `GITHUB_TOKEN` cannot push to that second repository.
 
-Deploy the code with `20260912_024954_site_boundaries`. It adds site fields, replaces global slug/source uniqueness with compound site constraints, and adds Development navigation. It preserves existing administrators and pages. Rolling this migration back after both sites publish matching slugs requires reconciling those duplicates first; the former schema cannot represent them.
+The publisher updates only the hosting repository's `gh-pages` branch, preserving its history and its existing main branch. Configure that repository's Pages source to deploy from `gh-pages`, root directory, after its first publication creates the branch. The output includes `.nojekyll` and `CNAME` for foliosuite.dev. No DNS change is needed merely to change that existing repository's publishing branch.
 
-Use the normal isolated integration/browser tests and `tests/smoke/migrations.mts`. The migration smoke test also checks existing Product pages and a matching Development slug. No hosted schema or content is modified by those tests.
+Before the first cutover, review the generated artifact and verify locally with `pnpm preview`. The existing UndoKit project Pages deployment occupies `/UndoKit/` under the organization site; retire that separate deployment as part of the coordinated cutover so it cannot shadow the combined site's documentation subtree. Verify the live root, blog, assets, latest and numbered documentation, search, and deep-link refresh after switching. A local build or branch push is not proof of hosted acceptance.
+
+No hosting settings, secrets, DNS records, or remote publication are changed by building this repository. `foliosuite.app` and Product hosting remain outside this implementation.

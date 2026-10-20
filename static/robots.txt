@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://foliosuite.dev/sitemap.xml

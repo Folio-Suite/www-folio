@@ -1,0 +1,33 @@
+---
+// SPDX-FileCopyrightText: 2026 the Folio Project
+// SPDX-License-Identifier: MIT
+import Page from '../layouts/Page.astro'
+import publication from '../../documentation/undokit/publication.json'
+---
+
+<Page
+  title="API documentation"
+  description="API documentation for Folio Suite frameworks, including UndoKit."
+>
+  <section class="intro compact">
+    <p class="eyebrow">API documentation</p>
+    <h1>Build on the foundations.</h1>
+    <p class="lede">Framework documentation, integration guides, and versioned API references.</p>
+  </section>
+  <article class="project-card featured">
+    <h2>UndoKit</h2>
+    <p>Durable undo and redo history for applications.</p>
+    <div class="card-links">
+      <a href="/UndoKit/">Latest documentation ({publication.latest}) →</a>
+      <a href="https://github.com/Folio-Suite/UndoKit">Source ↗</a>
+    </div>
+    <h3>Retained versions</h3>
+    <ul>
+      {publication.versions.map((entry) => (
+        <li>
+          <a href={entry.basePath}>{entry.version}</a>
+        </li>
+      ))}
+    </ul>
+  </article>
+</Page>

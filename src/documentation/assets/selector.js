@@ -62,7 +62,6 @@
         mount + (exists ? `${topic}/` : 'documentation/undokit/'),
         location.origin,
       )
-      if (parameters.get('site') === 'development') url.searchParams.set('site', 'development')
       if (!exists) url.searchParams.set('docc-topic-unavailable', '1')
       // Anchors may have changed across releases; don't carry an unverified fragment.
       location.assign(url.href)

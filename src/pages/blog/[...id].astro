@@ -1,0 +1,33 @@
+---
+// SPDX-FileCopyrightText: 2026 the Folio Project
+// SPDX-License-Identifier: MIT
+import { render, type CollectionEntry } from 'astro:content'
+import Page from '../../layouts/Page.astro'
+import { publishedPosts, displayDate } from '../../lib/blog'
+export async function getStaticPaths() {
+  return (await publishedPosts()).map((post) => ({ params: { id: post.id }, props: { post } }))
+}
+interface Props {
+  post: CollectionEntry<'blog'>
+}
+const { post } = Astro.props
+const { Content } = await render(post)
+---
+
+<Page title={post.data.title} description={post.data.description}>
+  <article class="prose">
+    <header class="intro compact">
+      <p class="eyebrow">Dev blog</p>
+      <h1>{post.data.title}</h1>
+      <p class="byline">
+        <time datetime={post.data.pubDate.toISOString()}>{displayDate(post.data.pubDate)}</time>
+        {post.data.author && ` · ${post.data.author}`}
+      </p>
+      <p class="lede">{post.data.description}</p>
+    </header>
+    <Content />
+    <p class="back-link">
+      <a href="/blog/">← All development notes</a>
+    </p>
+  </article>
+</Page>

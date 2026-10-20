@@ -1,0 +1,78 @@
+# SPDX-FileCopyrightText: 2026 the Folio Project
+# SPDX-License-Identifier: MIT
+name: Static development website
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish the reviewed build to the Development hosting repository
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: static-site-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      ASTRO_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: pnpm
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test
+      - run: pnpm build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: foliosuite-dev-static
+          path: dist/
+          include-hidden-files: true
+  publish:
+    if: github.event_name == 'workflow_dispatch' && inputs.publish && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    environment: development-pages
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: foliosuite-dev-static
+          path: site
+      - uses: actions/checkout@v4
+        with:
+          repository: Folio-Suite/folio-suite.github.io
+          path: hosting
+          token: ${{ secrets.DEVELOPMENT_PAGES_TOKEN }}
+      - name: Publish generated files while retaining hosting history
+        working-directory: hosting
+        run: |
+          set -euo pipefail
+          git ls-remote --heads origin refs/heads/gh-pages > "$RUNNER_TEMP/pages-ref"
+          if [ -s "$RUNNER_TEMP/pages-ref" ]; then
+            git fetch origin gh-pages
+            git switch -C gh-pages FETCH_HEAD
+          else
+            git switch --orphan gh-pages
+          fi
+          git rm -rf --ignore-unmatch .
+          cp -a ../site/. .
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add --all
+          if ! git diff --cached --quiet; then
+            git commit -m "Publish static site from $GITHUB_SHA"
+            git push origin HEAD:gh-pages
+          fi

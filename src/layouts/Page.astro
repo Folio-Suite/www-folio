@@ -1,0 +1,63 @@
+---
+// SPDX-FileCopyrightText: 2026 the Folio Project
+// SPDX-License-Identifier: MIT
+import '../styles/site.css'
+interface Props {
+  title: string
+  description: string
+}
+const { title, description } = Astro.props
+const canonical = new URL(Astro.url.pathname, Astro.site)
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="light" />
+    <title>{title} | Folio Suite Development</title>
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Folio development blog"
+      href="/feed.xml"
+    />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">
+      Skip to content
+    </a>
+    <header class="site-header">
+      <a class="wordmark" href="/" aria-label="Folio Suite developer home">
+        Folio<span>Suite</span>
+      </a>
+      <nav aria-label="Main navigation">
+        <a
+          href="/blog/"
+          aria-current={Astro.url.pathname.startsWith('/blog/') ? 'page' : undefined}
+        >
+          Dev blog
+        </a>
+        <a
+          href="/documentation/"
+          aria-current={Astro.url.pathname === '/documentation/' ? 'page' : undefined}
+        >
+          API docs
+        </a>
+        <a href="https://github.com/Folio-Suite">GitHub ↗</a>
+      </nav>
+    </header>
+    <main id="main">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <a href="/about/">About Folio Suite</a>
+      <a href="/feed.xml">RSS feed</a>
+      <span>Developer resources</span>
+    </footer>
+  </body>
+</html>

@@ -1,20 +1,18 @@
-# Folio publishing
+<!--
+SPDX-FileCopyrightText: 2026 the Folio Project
+SPDX-License-Identifier: MIT
+-->
 
-The public and developer-facing homes of Folio Suite share one editorial workspace.
+# Folio development publishing
 
-## Language
+**Development site**: the public developer home at foliosuite.dev, covering project resources, development notes, and API documentation.
 
-**Product site**:
-The Folio Suite audience at foliosuite.app, covering the product, its features, and user help.
+**Page**: repository-authored content published at a stable website URL.
 
-**Development site**:
-The Folio Suite audience at foliosuite.dev, covering development notes, specifications, and technical documentation.
+**Development note**: a Markdown blog entry with a title, description, publication date, and optional author. Drafts and future-dated notes are excluded from publication.
 
-**Destination**:
-The Product or Development site to which an editorial page belongs. A page has one destination.
+**Documentation snapshot**: generated API documentation tied to an identified framework release. Framework repositories own generating source; this repository owns retained output and website presentation.
 
-**Editorial workspace**:
-The shared place where trusted editors manage content for both Folio sites. Authors and media belong to this shared workspace.
+**Latest documentation**: the snapshot explicitly promoted to the stable framework root, independent of numerical version sorting.
 
-**Preview**:
-An editor's temporary view of a particular unpublished document on its intended destination.
+**Hosting repository**: the GitHub Pages destination containing generated website output. Website authors edit source in www-folio.

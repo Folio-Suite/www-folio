@@ -1,0 +1,81 @@
+---
+// SPDX-FileCopyrightText: 2026 the Folio Project
+// SPDX-License-Identifier: MIT
+import Page from '../layouts/Page.astro'
+import { publishedPosts, displayDate } from '../lib/blog'
+import publication from '../../documentation/undokit/publication.json'
+const posts = (await publishedPosts()).slice(0, 3)
+---
+
+<Page
+  title="Developer resources"
+  description="Developer resources, project source, and notes from work on Folio Suite."
+>
+  <section class="intro" aria-labelledby="page-title">
+    <p class="eyebrow">
+      <span class="status-dot" aria-hidden="true"></span>Developer resources
+    </p>
+    <h1 id="page-title">Tools for thoughtful work.</h1>
+    <p class="lede">
+      Folio Suite is a collection of native software projects. Explore the source, documentation,
+      and development notes.
+    </p>
+  </section>
+  <section class="projects" aria-label="Folio Suite projects">
+    <article class="project-card featured">
+      <div class="card-topline">
+        <span class="project-mark" aria-hidden="true">
+          ↶
+        </span>
+        <span class="kind">Library</span>
+      </div>
+      <h2>UndoKit</h2>
+      <p>Durable undo and redo history for applications.</p>
+      <p class="release-note">
+        <span class="release-pill">{publication.latest}</span>Latest documented release
+      </p>
+      <div class="card-links">
+        <a href="/UndoKit/">Documentation →</a>
+        <a href={`https://github.com/Folio-Suite/UndoKit/releases/tag/${publication.latest}`}>
+          Release notes ↗
+        </a>
+        <a href="https://github.com/Folio-Suite/UndoKit">Source ↗</a>
+      </div>
+    </article>
+    <article class="project-card">
+      <div class="card-topline">
+        <span class="project-mark folio-mark" aria-hidden="true">
+          F
+        </span>
+        <span class="kind">Project</span>
+      </div>
+      <h2>Folio</h2>
+      <p>Native tools for writing, research, and composition.</p>
+      <div class="card-links">
+        <a href="https://github.com/Folio-Suite/Folio">Explore source ↗</a>
+        <a href="/about/">About the suite →</a>
+      </div>
+    </article>
+  </section>
+  <section class="notes" aria-labelledby="notes-title">
+    <div class="section-heading">
+      <h2 id="notes-title">Development notes</h2>
+      <a href="/blog/">All posts →</a>
+    </div>
+    {posts.length ? (
+      <ul class="post-list">
+        {posts.map((post) => (
+          <li>
+            <time datetime={post.data.pubDate.toISOString()}>{displayDate(post.data.pubDate)}</time>
+            <h3>
+              <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+            </h3>
+            <p>{post.data.description}</p>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="muted">Notes from the work on Folio Suite will appear here.</p>
+    )}
+  </section>
+</Page>
