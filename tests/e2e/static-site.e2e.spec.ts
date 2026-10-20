@@ -12,6 +12,8 @@ test('the static root, pages, navigation and mobile layout work without an appli
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Tools for thoughtful work.')
   await page.keyboard.press('Tab')
   await expect(page.getByRole('link', { name: 'Skip to content' })).toBeFocused()
+  await page.keyboard.press('Enter')
+  await expect(page.locator('main')).toBeFocused()
   expect(await page.locator('script').count()).toBe(0)
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
   for (const url of ['/about/', '/blog/', '/documentation/'])
@@ -34,7 +36,7 @@ test('Markdown posts render with canonical metadata and drafts stay out of pages
     'href',
     'https://foliosuite.dev/blog/developer-resources/',
   )
-  for (const url of ['/blog/', '/feed.xml', '/sitemap.xml']) {
+  for (const url of ['/blog/', '/feed.xml', '/sitemap-0.xml']) {
     const body = await (await request.get(url)).text()
     expect(body).not.toContain('folio-browser-draft')
     expect(body).not.toContain('PRIVATE_DRAFT_TEST_MARKER')

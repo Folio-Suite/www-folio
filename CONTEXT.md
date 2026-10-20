@@ -15,4 +15,4 @@ SPDX-License-Identifier: MIT
 
 **Latest documentation**: the snapshot explicitly promoted to the stable framework root, independent of numerical version sorting.
 
-**Hosting repository**: the GitHub Pages destination containing generated website output. Website authors edit source in www-folio.
+**Pages deployment**: the generated website artifact published by www-folio’s GitHub Actions workflow. Source and publishing configuration live in the same repository.

@@ -5,6 +5,8 @@ SPDX-License-Identifier: MIT
 
 # Static Development website validation
 
+> Migration-time evidence at `4e690a6`. The subsequent canonical-layout and hosting consolidation audit is in [hygiene.md](hygiene.md).
+
 Validated October 19, 2026. Implementation replaces the Payload/Next.js application at baseline `f9778d43b6b5f7615ce98cb1eaa1004e92d0f785` with Astro 7.4.1 static output for foliosuite.dev. Product-site implementation is outside this rebuild.
 
 ## Source and output

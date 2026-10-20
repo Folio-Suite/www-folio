@@ -10,7 +10,9 @@ afterEach(() => roots.splice(0).forEach((root) => rmSync(root, { recursive: true
 it('exports latest and numbered docs as ordinary static files while preserving prior output on invalid input', () => {
   const temp = mkdtempSync(join(tmpdir(), 'folio-static-'))
   roots.push(temp)
-  const output = join(temp, 'public')
+  const output = join(temp, 'public/UndoKit')
+  mkdirSync(join(temp, 'public'))
+  writeFileSync(join(temp, 'public/keep.txt'), 'ordinary public asset')
   const run = (...extra: string[]) =>
     spawnSync(
       process.execPath,
@@ -20,17 +22,15 @@ it('exports latest and numbered docs as ordinary static files while preserving p
   const result = run()
   expect(result.stderr).toBe('')
   expect(result.status).toBe(0)
-  expect(readFileSync(join(output, 'CNAME'), 'utf8').trim()).toBe('foliosuite.dev')
-  expect(existsSync(join(output, 'UndoKit/documentation/undokit/index.html'))).toBe(true)
-  expect(existsSync(join(output, 'UndoKit/versions/0.2.0/documentation/undokit/index.html'))).toBe(
-    true,
-  )
-  expect(existsSync(join(output, 'UndoKit/versions/0.2.0/original'))).toBe(false)
-  expect(readFileSync(join(output, 'UndoKit/_folio/selector.js'), 'utf8')).toContain(
+  expect(existsSync(join(output, 'documentation/undokit/index.html'))).toBe(true)
+  expect(existsSync(join(output, 'versions/0.2.0/documentation/undokit/index.html'))).toBe(true)
+  expect(existsSync(join(output, 'versions/0.2.0/original'))).toBe(false)
+  expect(readFileSync(join(output, '_folio/selector.js'), 'utf8')).toContain(
     'Documentation versions',
   )
-  expect(readFileSync(join(output, 'UndoKit/latest/index.html'), 'utf8')).toContain('/UndoKit/')
-  const previous = readFileSync(join(output, 'UndoKit/publication.json'), 'utf8')
+  expect(readFileSync(join(output, 'latest/index.html'), 'utf8')).toContain('/UndoKit/')
+  expect(readFileSync(join(temp, 'public/keep.txt'), 'utf8')).toBe('ordinary public asset')
+  const previous = readFileSync(join(output, 'publication.json'), 'utf8')
   const broken = join(temp, 'broken')
   mkdirSync(broken)
   writeFileSync(
@@ -38,7 +38,7 @@ it('exports latest and numbered docs as ordinary static files while preserving p
     JSON.stringify({ schemaVersion: 1, latest: '9.9.9', versions: [] }),
   )
   expect(run('--documentation-root', broken).status).toBe(1)
-  expect(readFileSync(join(output, 'UndoKit/publication.json'), 'utf8')).toBe(previous)
+  expect(readFileSync(join(output, 'publication.json'), 'utf8')).toBe(previous)
   writeFileSync(join(broken, 'publication.json'), previous)
   mkdirSync(join(broken, 'latest/site'), { recursive: true })
   writeFileSync(
@@ -48,5 +48,5 @@ it('exports latest and numbered docs as ordinary static files while preserving p
   writeFileSync(join(broken, 'latest/site/index.html'), 'Altered snapshot')
   const tampered = run('--documentation-root', broken)
   expect(tampered.stderr).toContain('Documentation identity mismatch')
-  expect(readFileSync(join(output, 'UndoKit/publication.json'), 'utf8')).toBe(previous)
+  expect(readFileSync(join(output, 'publication.json'), 'utf8')).toBe(previous)
 }, 30000)

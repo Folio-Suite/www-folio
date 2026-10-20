@@ -18,7 +18,7 @@ import { parseArgs } from 'node:util'
 
 const { values } = parseArgs({
   options: {
-    output: { type: 'string', default: '.generated-public' },
+    output: { type: 'string', default: 'public/UndoKit' },
     'documentation-root': { type: 'string', default: 'documentation/undokit' },
   },
 })
@@ -105,8 +105,7 @@ async function prepare() {
       if (e.code !== 'ENOENT') throw e
     }
     working = await mkdtemp(path.join(path.dirname(output), '.folio-public-'))
-    await cp('static', working, { recursive: true })
-    const destination = path.join(working, 'UndoKit')
+    const destination = working
     await cp(path.join(docs, 'latest/site'), destination, { recursive: true })
     if ((await treeHash(destination)) !== sites[0].expectedHash)
       throw new Error('Latest changed during export')

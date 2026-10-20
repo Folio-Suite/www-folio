@@ -9,7 +9,7 @@
     "dev": "node scripts/prepare-public.mjs && astro dev",
     "build": "node scripts/prepare-public.mjs && astro build",
     "preview": "astro preview",
-    "check": "astro check && node --check scripts/prepare-public.mjs && node --check scripts/test-preview.mjs",
+    "check": "astro check && node --check scripts/prepare-public.mjs",
     "test": "vitest run --maxWorkers=1 && playwright test",
     "test:int": "vitest run --maxWorkers=1",
     "test:e2e": "playwright test",
@@ -17,6 +17,8 @@
     "format:check": "prettier --check src scripts tests astro.config.mjs playwright.config.ts vitest.config.mts"
   },
   "dependencies": {
+    "@astrojs/rss": "4.0.19",
+    "@astrojs/sitemap": "3.7.4",
     "astro": "7.4.1"
   },
   "devDependencies": {

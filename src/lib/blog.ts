@@ -13,8 +13,3 @@ export const displayDate = (date: Date) =>
     day: 'numeric',
     timeZone: 'UTC',
   }).format(date)
-export const escapeXML = (text: string) =>
-  text.replace(
-    /[<>&"']/g,
-    (char) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&apos;' })[char]!,
-  )

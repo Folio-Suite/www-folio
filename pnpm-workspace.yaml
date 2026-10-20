@@ -1,8 +1,6 @@
 allowBuilds:
-  bufferutil: false
   esbuild: true
   sharp: true
-  unrs-resolver: false
 minimumReleaseAgeExclude:
   - '@astrojs/check@0.9.11'
   - astro@7.4.1

@@ -80,10 +80,6 @@ main,
   color: var(--green);
   font-weight: 500;
 }
-.header-link {
-  font-size: 13px;
-  font-weight: 600;
-}
 .intro {
   max-width: 700px;
   padding: 76px 0 48px;
@@ -201,25 +197,9 @@ h2 {
   margin-top: auto;
   padding-top: 25px;
 }
-.card-links a,
-.organization a {
+.card-links a {
   font-size: 13px;
   font-weight: 650;
-}
-.organization {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  margin: 38px 0 70px;
-  padding: 21px 0;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-}
-.organization p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 13px;
 }
 .site-footer {
   display: flex;
@@ -255,12 +235,6 @@ h2 {
   .featured {
     padding-top: 25px;
   }
-  .organization {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 10px;
-    margin: 30px 0 50px;
-  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -278,7 +252,7 @@ h2 {
   font-size: 13px;
   font-weight: 600;
 }
-.site-header nav a[aria-current='page'] {
+.site-header nav a[aria-current] {
   text-decoration-thickness: 3px;
 }
 main {

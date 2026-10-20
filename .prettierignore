@@ -2,7 +2,6 @@ node_modules/
 dist/
 .astro/
 .generated-public/
-.test-dist/
 /documentation/
-.agents/
 pnpm-lock.yaml
+public/UndoKit/

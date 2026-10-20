@@ -12,7 +12,7 @@ export default defineConfig({
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
-    command: 'node scripts/test-preview.mjs',
+    command: 'pnpm build && pnpm preview --ignore-lock --port 4322 --host 127.0.0.1',
     url: 'http://127.0.0.1:4322',
     reuseExistingServer: false,
     timeout: 120000,

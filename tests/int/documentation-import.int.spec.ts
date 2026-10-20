@@ -1,6 +1,5 @@
 // SPDX-FileCopyrightText: 2026 the Folio Project
 // SPDX-License-Identifier: MIT
-// @vitest-environment node
 import { afterEach, expect, it } from 'vitest'
 import {
   mkdtempSync,
