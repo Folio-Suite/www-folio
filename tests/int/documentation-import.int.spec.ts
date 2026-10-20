@@ -59,7 +59,7 @@ if ARGV == ['--find', 'docc']; puts __FILE__; exit; end
 if ARGV == ['docc', '--help']; puts 'fixture DocC'; exit; end
 exit 1 if ENV['FAIL_TRANSFORM']
 out = ARGV[ARGV.index('--output-path')+1]; base = ARGV[ARGV.index('--hosting-base-path')+1]
-FileUtils.mkdir_p(out+'/documentation/undokit'); FileUtils.mkdir_p(out+'/js'); FileUtils.mkdir_p(out+'/index'); FileUtils.mkdir_p(out+'/data/documentation')
+FileUtils.mkdir_p(out+'/videos/dev.foliosuite.UndoKit'); FileUtils.mkdir_p(out+'/documentation/undokit'); FileUtils.mkdir_p(out+'/js'); FileUtils.mkdir_p(out+'/index'); FileUtils.mkdir_p(out+'/data/documentation')
 File.write(out+'/index.html', '<html><head></head><body>root</body></html>')
 File.write(out+'/documentation/undokit/index.html', '<html><head><script src="'+base+'/js/app.js"></script></head><body>UndoKit</body></html>')
 File.write(out+'/js/app.js', 'app'); File.write(out+'/index/index.json','{"interfaceLanguages":{"swift":[{"path":"/documentation/undokit"}]}}'); File.write(out+'/index/navigator.index','index'); File.write(out+'/data/documentation/undokit.json','{}')
@@ -144,6 +144,9 @@ it('imports a bound release and publishes latest with provenance and website nav
   expect(result.status).toBe(0)
   const registry = JSON.parse(readFileSync(join(f.output, 'publication.json'), 'utf8'))
   expect(registry.latest).toBe('1.2.3')
+  expect(JSON.parse(readFileSync(join(f.output, 'empty-directories.json'), 'utf8'))).toContain(
+    'latest/site/videos/dev.foliosuite.UndoKit',
+  )
   expect(registry.versions[0].routes).toContain('documentation/undokit/')
   expect(
     readFileSync(join(f.output, 'latest/site/documentation/undokit/index.html'), 'utf8'),

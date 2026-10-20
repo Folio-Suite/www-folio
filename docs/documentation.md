@@ -36,7 +36,7 @@ The original archives and provenance files remain in the source repository and a
 
 Website customizations belong in the importer and `src/documentation/assets/`. For changes to generated HTML, reimport each retained original with its adjacent release manifest into a fresh `--output` tree, importing the intended Latest version last. Validate and replace the tracked derivatives in a reviewed commit. Shared navigation assets are ordinary website source and are copied after documentation verification. Do not hand-edit generated snapshots and leave stale digests.
 
-The export command validates all inputs before replacing `public/UndoKit/`. A failed validation preserves the preceding export. A lock prevents simultaneous exporters; a leftover `public/UndoKit.lock` after a killed process should be inspected and removed only when no exporter remains. Original importer candidates and website derivatives use different digests because they describe different bytes.
+The export command validates all inputs before replacing `public/UndoKit/`. A failed validation preserves the preceding export. A lock prevents simultaneous exporters; a leftover `public/UndoKit.lock` after a killed process should be inspected and removed only when no exporter remains. Original importer candidates and website derivatives use different digests because they describe different bytes. `empty-directories.json` records empty DocC resource directories that Git cannot store. The importer refreshes this inventory; the exporter restores those directories after a fresh checkout before verifying the original tree hashes. No placeholder files or altered checksums are introduced.
 
 ## Cutover
 

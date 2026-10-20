@@ -159,6 +159,8 @@ module FolioDocumentation
         registry['latest'] = version
         registry['versions'] << { 'version' => version, 'basePath' => base, 'routes' => routes, 'sourceCommit' => manifest['sourceCommit'] }
         write_json(File.join(working, 'publication.json'), registry)
+        empty_directories = Dir.glob(File.join(working, '**', '*'), File::FNM_DOTMATCH).select { |path| File.directory?(path) && Dir.empty?(path) }.map { |path| path.delete_prefix(working + '/') }.sort
+        write_json(File.join(working, 'empty-directories.json'), empty_directories)
         check(!File.exist?(backup), "recovery backup exists: #{backup}; inspect before importing")
         File.rename(output, backup) if File.exist?(output)
         begin

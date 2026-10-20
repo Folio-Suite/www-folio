@@ -58,6 +58,25 @@ const json = async (file) => JSON.parse(await readFile(file, 'utf8'))
 async function prepare() {
   if (output === docs || output.startsWith(docs + path.sep) || docs.startsWith(output + path.sep))
     throw new Error('Output and retained documentation must be separate')
+  // Git cannot retain empty DocC resource directories, but producer hashes include them.
+  // Recreate only the reviewed inventory; do not change the original artifact bytes.
+  let emptyDirectories = []
+  try {
+    emptyDirectories = await json(path.join(docs, 'empty-directories.json'))
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error
+  }
+  if (!Array.isArray(emptyDirectories)) throw new Error('Invalid empty-directory inventory')
+  for (const relative of emptyDirectories) {
+    if (
+      typeof relative !== 'string' ||
+      !/^(latest|versions\/\d+\.\d+\.\d+)\//.test(relative) ||
+      relative.split('/').some((part) => !part || part === '.' || part === '..') ||
+      relative.includes('\\')
+    )
+      throw new Error('Invalid empty-directory path')
+    await mkdir(path.join(docs, relative), { recursive: true })
+  }
   const registry = await json(path.join(docs, 'publication.json'))
   if (
     registry.schemaVersion !== 1 ||
