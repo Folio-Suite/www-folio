@@ -36,3 +36,15 @@ Standards review found no actionable issue in packaging, extraction, verificatio
 ## Operating contract
 
 [API pipeline runbook](../documentation.md) documents producer and website packaging jobs, explicit Latest adoption, immutable asset identities, offline use, recovery, and reserved DocC root asset paths. Original archives and provenance are retained in permanent bundles, never exported into the website. Adding independently generated frameworks at the root needs a shared renderer/index strategy; no multi-framework merge is claimed. The first website bundle is proven locally and through an actual public cold download; the future manual Xcode packaging workflow itself has not been dispatched during this implementation.
+
+## Hosted acceptance
+
+The clean Linux validation [run 39363449660](https://github.com/Folio-Suite/www-folio/actions/runs/39363449660) passed. The explicit production [run 39363450115](https://github.com/Folio-Suite/www-folio/actions/runs/39363450115), source `5167d40517c4d9c0e47e82294c543a6261549c0b`, passed both build and Pages publication. Both runs fetched the locked public bundle from a clean checkout with no tracked documentation snapshots.
+
+Initial Linux acceptance exposed GNU tar’s verbose warnings about optional macOS PAX metadata, exceeding the command buffer. The extractor now detects GNU tar and suppresses only its `unknown-keyword` warning class. Unsafe-path/type rejection and all content hashes remain enforced. The published asset bytes and their digest were not changed to bypass this failure. The obsolete tracked `documentation/undokit.lock` was removed as well; the old artifact directory now has zero tracked files.
+
+Verified after deployment: root and documentation landing pages, canonical module and HistorySession routes, the numbered 0.2.2 HistorySession route, and the shared registry all return HTTP 200. The registry contains only 0.2.2. Old `/UndoKit/documentation/...` and `/UndoKit/latest/documentation/...` shells point at the shorter canonical topic; a live browser followed the latter and rendered HistorySession at `/documentation/undokit/historysession/`. The live module renders fully and its selector switches Latest to numbered 0.2.2. Retired 0.2.0 topic pages and original release evidence paths return 404. The ordinary Astro homepage and documentation index remain intact.
+
+Producer maintenance CI passed in [run 39363250927](https://github.com/Folio-Suite/UndoKit/actions/runs/39363250927), including the original documentation suite (16 tests/290 assertions) and the new packaging suite (2 tests/17 assertions). The unchanged framework’s Debug/Release native jobs were still running when this website acceptance record was saved; their results are not claimed here. This change does not rebuild or republish the framework binary or qualification evidence.
+
+Final Standards review: 0 actionable findings. Final Spec review: 0 remaining findings after the legacy deep-link correction. The temporary website artifact-publication branch was deleted only after proving ancestry and synchronized main; the immutable asset tag and both repository histories remain.
